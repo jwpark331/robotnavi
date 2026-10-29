@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>보이지 않는 계단</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #efeee9; --line: #dad8d0;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #85837c;
+  --truth: #0b0b0b; --est: #2a78d6; --void: #d03b3a; --keep: rgba(208, 59, 58, .22); --cliff: #eb6834;
+  --caution: rgba(201, 133, 0, .35);
+  --ok: #1baf7a; --bad: #d03b3a; --warn: #c98500;
+  --c-P0: #85837c; --c-P1: #2a78d6; --c-P2: #c98500; --c-P3m: #8b5cc4; --c-P3: #1baf7a;
+  --accent: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #242422; --line: #3a3936;
+    --text: #ffffff; --text-2: #c3c2b7; --muted: #8e8c84;
+    --truth: #ffffff; --est: #3987e5; --void: #ef6b6a; --keep: rgba(239, 107, 106, .25); --cliff: #f08a5d;
+    --caution: rgba(224, 162, 26, .35);
+    --ok: #199e70; --bad: #ef6b6a; --warn: #e0a21a;
+    --c-P0: #8e8c84; --c-P1: #3987e5; --c-P2: #e0a21a; --c-P3m: #a07ad8; --c-P3: #199e70;
+    --accent: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #242422; --line: #3a3936;
+  --text: #ffffff; --text-2: #c3c2b7; --muted: #8e8c84;
+  --truth: #ffffff; --est: #3987e5; --void: #ef6b6a; --keep: rgba(239, 107, 106, .25); --cliff: #f08a5d;
+  --caution: rgba(224, 162, 26, .35);
+  --ok: #199e70; --bad: #ef6b6a; --warn: #e0a21a;
+  --c-P0: #8e8c84; --c-P1: #3987e5; --c-P2: #e0a21a; --c-P3m: #a07ad8; --c-P3: #199e70;
+  --accent: #3987e5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.55 "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 28px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -.01em; line-height: 1.3; }
+h2 { font-size: 18px; margin: 44px 0 4px; }
+h3 { font-size: 14.5px; margin: 0 0 6px; }
+a { color: var(--accent); }
+.lede { color: var(--text-2); margin: 0 0 6px; max-width: 800px; }
+.note { color: var(--muted); font-size: 13px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--surface-2); }
+.seg button, .chip { font: inherit; font-size: 13.5px; border: 0; background: transparent; color: var(--text-2);
+  padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 0 0 1px var(--line); }
+.chip { border: 1px solid var(--line); display: inline-flex; gap: 6px; align-items: center; background: var(--surface); }
+.chip[aria-pressed="true"] { color: var(--text); border-color: var(--text-2); box-shadow: inset 0 0 0 1px var(--text-2); }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.replay { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 16px; margin-top: 12px; }
+@media (max-width: 900px) { .replay { grid-template-columns: 1fr; } }
+.stage { position: relative; width: 100%; aspect-ratio: 960 / 800; background: var(--surface-2); border-radius: 8px; overflow: hidden; }
+.stage video, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ctrl { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.ctrl input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.btn { font: inherit; font-size: 13.5px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+  border-radius: 8px; padding: 5px 12px; cursor: pointer; min-width: 64px; }
+select.btn { min-width: 0; }
+.stat { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; margin: 0; }
+.stat dt { color: var(--muted); } .stat dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.big { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.status { display: inline-block; font-size: 12.5px; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); }
+.status.fall { background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }
+.status.arrived { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+.status.failed, .status.timeout { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--text-2); margin-top: 8px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.legend b { display: inline-block; width: 12px; height: 12px; vertical-align: -1px; margin-right: 5px; border-radius: 2px; }
+.side .card + .card { margin-top: 12px; }
+.side h3 { font-size: 13px; color: var(--muted); font-weight: 600; }
+.events { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.events li { padding: 3px 0; border-bottom: 1px dashed var(--line); display: flex; justify-content: space-between; gap: 8px; cursor: pointer; }
+.events li:last-child { border-bottom: 0; }
+svg text { font: 12px system-ui, sans-serif; fill: var(--text-2); }
+svg .axis { stroke: var(--line); } svg .grid { stroke: var(--line); stroke-dasharray: 2 3; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+td.cell { cursor: pointer; }
+td.cell:hover { background: var(--surface-2); }
+.tablewrap { overflow-x: auto; }
+.find { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; margin-top: 12px; }
+.find ul { margin: 6px 0 0; padding-left: 18px; } .find li { margin: 4px 0; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 12px; }
+.mapwrap canvas { width: 100%; display: block; border-radius: 6px; background: var(--surface-2); }
+.cm { display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.cm div { padding: 6px 8px; border-radius: 6px; background: var(--surface-2); text-align: right; }
+.cm .h { background: transparent; color: var(--muted); text-align: center; font-size: 12px; }
+.cm .good { background: color-mix(in srgb, var(--ok) 14%, transparent); }
+.cm .badc { background: color-mix(in srgb, var(--bad) 14%, transparent); }
+code { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>보이지 않는 계단 — Gazebo 데모</h1>
+  <p class="lede">2024년 6월 구미시청 행정 로봇이 2 m 계단 아래에서 멈춘 채 발견됐다. 목격자들은 추락 직전 로봇이 "무언가 있는 것처럼 한 자리에서 맴돌았다"고 했다.
+  원인은 공식 확인되지 않았다. 이 데모는 그 <b>가설</b> 하나를 재현한다: <b>수평 2D LiDAR로 만든 SLAM 지도에는 내려가는 계단이 '바닥'으로 찍히고</b>,
+  여기에 사람 회피나 위치 착각이 겹치면 Nav2가 계단으로 경로를 낸다. 그리고 keepout, 깊이카메라 단일 프레임, 베이즈 필터(기억을 map 프레임에 / odom 프레임에)가 각각 어느 경우를 막는지 본다.</p>
+  <p class="note" id="meta"></p>
+
+  <h2>SLAM 지도에는 계단이 바닥으로 보인다</h2>
+  <p class="note" style="margin:0">slam_toolbox로 실제 매핑한 결과(흰색 = 빈 바닥). 빨간 테두리는 실제 계단 구멍. LiDAR 빔은 바닥 위 32 cm 높이로 계단 위를 지나 건너편 벽에 닿으므로 구멍이 '빈 공간'이 된다.</p>
+  <div class="two">
+    <div class="card mapwrap"><h3>SLAM 지도 + 실제 계단</h3><canvas id="mapCv" aria-label="SLAM 지도와 실제 계단 위치"></canvas></div>
+    <div class="card"><h3>시나리오</h3><div id="scenList"></div>
+      <h3 style="margin-top:14px">조건</h3><div id="condList"></div></div>
+  </div>
+
+  <h2>회차 리플레이</h2>
+  <p class="note" style="margin:0">위에서 내려다본 Gazebo 영상 위에 로봇이 <b>믿는</b> 것을 겹쳐 그린다. keepout과 낭떠러지 셀은 지도 프레임에 있으므로, 로봇이 자기 위치를 착각하면 실제 세상에서 그만큼 어긋난 곳에 놓인다.</p>
+  <div class="row" style="margin-top:10px">
+    <div class="seg" id="scenSeg" role="group" aria-label="시나리오"></div>
+    <div class="row" id="condChips"></div>
+  </div>
+  <div class="replay">
+    <div class="card">
+      <div class="stage" id="stage">
+        <video id="vid" muted playsinline preload="auto"></video>
+        <canvas id="ov" aria-label="로봇의 믿음을 겹쳐 그린 리플레이"></canvas>
+      </div>
+      <div class="ctrl">
+        <button class="btn" id="play">재생</button>
+        <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="시간">
+        <select class="btn" id="speed" aria-label="재생 속도"><option value="0.5">느리게</option><option value="1" selected>보통</option><option value="2">빠르게</option></select>
+      </div>
+      <div class="legend">
+        <span><i style="border-color:var(--truth)"></i>실제 경로</span>
+        <span><i style="border-color:var(--est);border-top-style:dashed"></i>AMCL이 믿는 경로</span>
+        <span><b style="background:var(--keep);outline:1.5px solid var(--void)"></b>keepout (로봇이 믿는 자리)</span>
+        <span><b style="background:var(--cliff)"></b>낭떠러지 판정 셀</span>
+        <span><b style="background:var(--caution)"></b>주의 셀 (결측만)</span>
+        <span><i style="border-color:var(--void);border-top-style:dotted"></i>실제 계단 가장자리</span>
+      </div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h3 id="runTitle"></h3>
+        <div><span class="status" id="status"></span></div>
+        <div style="margin-top:8px"><span class="big" id="edgeNow">–</span> <span class="note">m 가장자리까지 (실제)</span></div>
+        <dl class="stat" id="live" style="margin-top:8px"></dl>
+      </div>
+      <div class="card">
+        <h3>가장자리까지 거리 — 같은 시나리오의 조건들</h3>
+        <svg id="edgeChart" viewBox="0 0 260 160" width="100%" role="img" aria-label="시간에 따른 가장자리까지 거리"></svg>
+        <div class="note">0 아래로 내려가면 로봇 중심이 계단 구멍 위 = 추락.</div>
+      </div>
+      <div class="card">
+        <h3>사건</h3>
+        <ul class="events" id="events"></ul>
+      </div>
+    </div>
+  </div>
+
+  <h2>결과</h2>
+  <p class="note" style="margin:0">칸을 누르면 그 회차를 리플레이한다. 시드가 여럿이면 회차 수를 함께 센다.</p>
+  <div class="card tablewrap" style="margin-top:12px"><table id="matrix"></table></div>
+  <div class="find" id="findings"></div>
+
+  <h2>필터가 왜 필요한가 — 단일 프레임 vs 베이즈</h2>
+  <p class="note" style="margin:0">깊이카메라가 본 바닥 셀마다 "지금 낭떠러지로 판정했나"를 실제 계단 구멍과 비교했다(셀 단위, 가장자리 ±5 cm 제외, 모든 회차 합). 검은 매트(반사 약함 → 결측)와 창가 햇빛(이상치)은 Gazebo가 렌더링하지 못해 해당 구역 픽셀에 주입했다.
+  재현율은 셀-프레임 단위라, 베이즈가 낭떠러지를 확정하기까지 걸리는 2–3 프레임(0.2–0.3 s)도 '놓침'으로 센다 — 재현율이 낮아도 실제로 놓쳐서 떨어진 회차는 결과표에서 본다.
+  가짜 낭떠러지(오른쪽 위 칸)는 단일 프레임에서 로봇을 멈춰 세우고 돌아가게 만든다.</p>
+  <div class="two" id="cmWrap"></div>
+
+  <h2>구성</h2>
+  <div class="card tablewrap" style="margin-top:12px"><table>
+    <tr><th>이 데모</th><th>ROS 2 / GitHub</th><th>역할</th></tr>
+    <tr><td>매핑</td><td><code>slam_toolbox</code> online async</td><td>정해진 경로를 돌며 지도 생성 → 계단이 빈 바닥으로 찍힘</td></tr>
+    <tr><td>위치 추정</td><td><code>nav2_amcl</code> (기본값)</td><td>파티클 필터. S3에서는 인코더가 모르는 0.8–1.0 m 밀림을 넣는다</td></tr>
+    <tr><td>주행</td><td>Nav2 Humble: NavFn + DWB + 행동 트리(회전·후진 복구)</td><td>기본 설정 그대로</td></tr>
+    <tr><td>Keepout</td><td><code>nav2_costmap_2d::KeepoutFilter</code> + <code>costmap_filter_info_server</code></td><td>운영자가 그린 금지 구역 (계단 + 30 cm). S4에서는 계단 B를 빠뜨림</td></tr>
+    <tr><td>낭떠러지 층</td><td><code>cliff_detector</code> (이 프로젝트) → 두 번째 KeepoutFilter</td><td>깊이 픽셀 → 바닥 높이 → 셀별 표 → 단일 프레임 / 베이즈 log-odds → 마스크를 5 Hz로 발행. 베이즈 기억을 map 프레임(P3m)이나 odom 프레임(P3)에 둔다 — Nav2 지역 코스트맵이 odom 프레임인 것과 같은 이유</td></tr>
+    <tr><td>로봇</td><td>Gazebo Classic 11, 차동구동 서빙로봇형</td><td>앞쪽 270° LiDAR(32 cm), 기둥 위 깊이카메라(66 cm, 45° 아래, 86°×58°), 뒤쪽 센서 없음</td></tr>
+  </table></div>
+
+  <h2>한계</h2>
+  <ul class="note" style="font-size:13.5px;line-height:1.7">
+    <li>구미 사건의 실제 원인을 밝히는 실험이 아니다. "SLAM 지도에 계단이 안 보인다"는 한 가지 가설을 재현했다.</li>
+    <li>사람은 서 있는 원기둥이다. 걷는 사람, 사람 다리 모양의 스캔은 없다.</li>
+    <li>깊이카메라 결측·이상치는 위치를 정해 주입한 것이다(실제 센서 특성에 맞춘 비율이 아님). 비율은 <code>cliff_detector.py</code> 상단에 있다.</li>
+    <li>회차 수가 적다(시드별 1회). 성공률·추락률로 말하려면 시드를 늘려 다시 돌려야 한다 — <code>SEEDS="1 2 3 4 5" ./run_all.sh</code>.</li>
+    <li>시나리오는 스트레스 케이스다: S3는 계단 쪽으로 미는 방향만, S4는 문 남쪽을 막아 북쪽(계단 B 쪽)으로 돌게 한 배치다. 모든 조건이 같은 상황을 겪는다.</li>
+    <li>Nav2가 복구 끝에 포기하면 시나리오 실행기가 같은 목표를 다시 보낸다(최대 4번, 150초 안). 실제 관제 시스템의 재시도를 흉내 낸 것이다.</li>
+    <li>Nav2 costmap filter는 인플레이션 층을 거치지 않는다. 그래서 낭떠러지 마스크에 직접 0.30 m 금지 + 0.70 m까지 줄어드는 비용 고리를 넣었다(운영자 keepout은 30 cm 금지만).</li>
+  </ul>
+</main>
+<script>
+const DATA = {"generated":"2026-10-07 20:51","gazebo":"11.10.2","scenarios":["S1","S2","S3","S4"],"conditions":["P0","P1","P2","P3m","P3"],"scenLabels":{"S1":"평상시","S2":"계단 앞 사람들","S3":"위치 착각","S4":"keepout 안 그린 계단"},"scenDesc":{"S1":"사람 없음. 복도를 지나 모퉁이를 돌아 사무실로","S2":"모퉁이 안쪽(가지 복도 입구)에 4명이 서서 대화 중, 45초 뒤 흩어짐","S3":"사람 없음. 복도 중간에서 로봇이 앞으로 0.8–1.0 m 밀림 (바퀴 인코더는 모름 → AMCL이 위치를 착각)","S4":"사무실 문 앞 모퉁이 안쪽에 3명(45초 뒤 흩어짐). 운영자가 계단 B keepout을 안 그림"},"condLabels":{"P0":"SLAM 지도만","P1":"+ Keepout (현장 관행)","P2":"+ 깊이카메라 단일 프레임","P3m":"+ 베이즈 (기억을 map 프레임에)","P3":"+ 베이즈 (기억을 odom 프레임에, 제안)"},"geom":{"voids":{"A":[8.2,3.0,11.0,5.4],"B":[6.6,9.5,9.0,11.2]},"keepoutMargin":0.3,"start":[1.3,4.2,0.0],"goal":[5.3,8.9,3.141592653589793],"overhead":{"x":5.75,"y":6.9,"z":24.0,"hfov":0.4703019394178876,"w":960,"h":800},"robotR":0.25,"personR":0.2},"map":{"png":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAACrCAAAAAA2352XAAACdUlEQVR4nO2da27CMBCENxYXqnL/I/hKVn8kIAgB7eJXZjRfEbTISjzd3bFj3HTJNo012N7Z1Vu4Iw0pkcapeUMcJAkBSUI4+VRJIcdzo8RDQJIQkCQEJAkBSUJAkhCQJAQIJdWuEEUXrp7otdxWvegVuYwbkxJD1/Fe5KeKAH9lYi1FE8/bfqKkaJS87QkdDyjxvChKHQ7gZpg99FlePIPQHgBMvBdA45IXRakhpQSdRfbAhCQhIEkISBICkoSAJCEAJEnTViYq18QrrkzTRXd6Tdy//BGttiIgSQhI0pFey4s1yMQRkKQjqqUqdHHBhCQdGWkPg2pppD2oln6FcFy6IpKEAJDjealex7temCslPUdp3X9YzbKtef+y/MEVuwV4mXlzhNidBDTUzkA7vdxoTRwB1VJLCBNPUXIje0BAtdQSwlpSlNwoSghIEgKS1BJCx+uFJCEgSQgASfJOoLzL/O/Hq/bgv1Dr1Prj55PfUPWsM5Yg/o8EnMfNVg6E+jMUmFryd/T3xKsmVozNE68HugR0QzgTt+w89NHxWlje2zG/cNLhYtks57LVWc7bIy/u0x/faBDfuhvZl7Q/l+0vh7ZvSlpG3tBlCEn2gIAkISBJCEgSAu4tYTgQRolxQsSXeIxRmt2D9kgSArKH65P4olQoa2l2B9pDKInOHghnD4kv8Tgdj21conQ8SUJA4xICdI6noRYDSUKAUJLGJQQYJbENtZS1ZHnbcGX3fVdW6jX22BX2fg7bo1Eeb2yPmz3q6fECUV/p9cks3R+3Djv9TnZ4jqxYiIjE6CBp9q3LOkiaPSwo8S58kgdd/l/t3NATJt4/cmjSus44JRkAAAAASUVORK5CYII=","ox":0.54,"oy":2.63,"res":0.05,"w":210,"h":171},"runs":[{"scenario":"S2","condition":"P0","seed":1,"outcome":"fall","t0_sim":3.3,"time":17.8,"recoveries":0,"min_edge":0.049,"pushed":false,"push_dx":null,"people":[["person0",6.952,4.822],["person1",7.393,5.122],["person2",7.02,5.588],["person3",7.652,5.735]],"events":[{"t":17.8,"kind":"fall","x":8.151,"y":4.861}],"final_gt":[8.176,4.861],"goal_err":4.958,"frames":59,"frame_t":[0.1,0.4,0.7,1.0,1.3,1.6,1.9,2.2,2.5,2.8,3.1,3.4,3.7,4.0,4.3,4.6,4.9,5.2,5.5,5.8,6.1,6.4,6.8,7.1,7.4,7.7,8.0,8.3,8.6,8.9,9.2,9.5,9.8,10.1,10.4,10.7,11.0,11.3,11.6,11.9,12.2,12.5,12.8,13.1,13.4,13.7,14.0,14.3,14.6,14.9,15.2,15.5,15.8,16.1,16.4,16.7,17.0,17.3,17.6],"resent":0,"retried":0,"track":[[0.1,1.302,4.2,0.0,-0.001,1.3,4.2,0.0,-0.0,-0.0,0,0.001,0.0,0.0],[0.4,1.367,4.2,0.024,-0.001,1.3,4.2,0.0,-0.0,-0.0,0,0.067,0.0,0.024],[0.6,1.453,4.203,0.042,-0.001,1.3,4.2,0.0,-0.0,-0.0,0,0.152,0.003,0.042],[1.0,1.63,4.217,0.117,-0.001,1.572,4.215,0.095,0.01623,0.00123,0,0.329,0.017,0.117],[1.3,1.763,4.234,0.133,-0.001,1.572,4.215,0.095,0.01623,0.00123,0,0.472,0.036,0.133],[1.7,1.939,4.259,0.145,-0.001,1.833,4.252,0.138,0.02898,0.00496,0,0.648,0.061,0.146],[2.0,2.072,4.28,0.164,-0.001,1.833,4.252,0.138,0.02898,0.00496,0,0.789,0.083,0.166],[2.3,2.202,4.302,0.166,-0.001,2.071,4.283,0.158,0.04371,0.00946,0,0.919,0.105,0.163],[2.7,2.377,4.33,0.152,-0.001,2.307,4.328,0.153,0.05492,0.01206,0,1.094,0.133,0.154],[3.0,2.531,4.353,0.154,-0.001,2.307,4.328,0.153,0.05492,0.01206,0,1.225,0.153,0.154],[3.3,2.664,4.372,0.102,-0.001,2.573,4.365,0.103,0.06005,0.01348,0,1.358,0.172,0.105],[3.7,2.84,4.384,0.025,-0.001,2.573,4.365,0.103,0.06005,0.01348,0,1.534,0.183,0.027],[4.0,2.976,4.384,-0.019,-0.001,2.84,4.387,0.0,0.06563,0.01661,0,1.678,0.183,-0.02],[4.2,3.065,4.381,-0.029,-0.001,2.84,4.387,0.0,0.06563,0.01661,0,1.767,0.181,-0.029],[4.4,3.153,4.379,-0.03,-0.001,2.84,4.387,0.0,0.06563,0.01661,0,1.855,0.178,-0.03],[4.6,3.242,4.376,-0.03,-0.001,3.094,4.381,-0.017,0.07544,0.02279,0,1.944,0.176,-0.03],[4.8,3.33,4.373,-0.03,-0.001,3.094,4.381,-0.017,0.07544,0.02279,0,2.032,0.173,-0.031],[5.0,3.42,4.371,-0.03,-0.001,3.094,4.381,-0.017,0.07544,0.02279,0,2.122,0.17,-0.031],[5.2,3.507,4.368,-0.03,-0.001,3.36,4.381,-0.025,0.08909,0.01971,0,2.218,0.167,-0.028],[5.4,3.597,4.366,-0.018,-0.001,3.36,4.381,-0.025,0.08909,0.01971,0,2.308,0.165,-0.017],[5.6,3.685,4.364,-0.024,-0.001,3.36,4.381,-0.025,0.08909,0.01971,0,2.396,0.163,-0.026],[5.8,3.775,4.361,-0.034,-0.001,3.623,4.374,-0.023,0.09442,0.01824,0,2.486,0.16,-0.034],[6.0,3.864,4.358,-0.034,-0.001,3.623,4.374,-0.023,0.09442,0.01824,0,2.575,0.157,-0.034],[6.2,3.953,4.355,-0.034,-0.001,3.623,4.374,-0.023,0.09442,0.01824,0,2.664,0.154,-0.034],[6.4,4.042,4.352,-0.034,-0.001,3.889,4.361,-0.029,0.09822,0.01571,0,2.752,0.151,-0.035],[6.6,4.131,4.349,-0.035,-0.001,3.889,4.361,-0.029,0.09822,0.01571,0,2.841,0.148,-0.035],[6.9,4.243,4.345,-0.035,-0.001,4.16,4.356,-0.009,0.11783,0.01423,0,2.94,0.145,-0.035],[7.1,4.332,4.342,-0.039,-0.001,4.16,4.356,-0.009,0.11783,0.01423,0,3.029,0.142,-0.039],[7.3,4.42,4.338,-0.051,-0.001,4.16,4.356,-0.009,0.11783,0.01423,0,3.117,0.138,-0.051],[7.5,4.509,4.333,-0.064,-0.001,4.417,4.359,-0.023,0.13357,0.01591,0,3.206,0.133,-0.064],[7.7,4.598,4.326,-0.09,-0.001,4.417,4.359,-0.023,0.13357,0.01591,0,3.294,0.126,-0.09],[7.9,4.686,4.318,-0.103,-0.001,4.417,4.359,-0.023,0.13357,0.01591,0,3.382,0.117,-0.103],[8.1,4.774,4.308,-0.113,-0.001,4.678,4.34,-0.072,0.13852,0.01943,0,3.47,0.108,-0.113],[8.3,4.863,4.298,-0.126,-0.001,4.678,4.34,-0.072,0.13852,0.01943,0,3.568,0.096,-0.127],[8.5,4.952,4.287,-0.117,-0.001,4.678,4.34,-0.072,0.13852,0.01943,0,3.657,0.085,-0.116],[8.7,5.041,4.277,-0.106,-0.001,4.95,4.318,-0.075,0.12802,0.02218,0,3.745,0.075,-0.105],[8.9,5.128,4.268,-0.098,-0.001,4.95,4.318,-0.075,0.12802,0.02218,0,3.833,0.066,-0.099],[9.1,5.215,4.259,-0.1,-0.001,4.95,4.318,-0.075,0.12802,0.02218,0,3.92,0.058,-0.1],[9.3,5.304,4.25,-0.107,-0.001,5.213,4.293,-0.07,0.12453,0.01898,0,4.017,0.048,-0.11],[9.5,5.392,4.24,-0.111,-0.001,5.213,4.293,-0.07,0.12453,0.01898,0,4.105,0.038,-0.112],[9.7,5.48,4.231,-0.107,-0.001,5.213,4.293,-0.07,0.12453,0.01898,0,4.193,0.028,-0.105],[9.9,5.566,4.222,-0.1,-0.001,5.452,4.261,-0.084,0.11387,0.02157,0,4.279,0.019,-0.098],[10.1,5.656,4.213,-0.088,-0.001,5.452,4.261,-0.084,0.11387,0.02157,0,4.369,0.011,-0.086],[10.3,5.767,4.204,-0.083,-0.001,5.452,4.261,-0.084,0.11387,0.02157,0,4.458,0.004,-0.083],[10.5,5.857,4.196,-0.102,-0.001,5.693,4.242,-0.086,0.11688,0.02289,0,4.547,-0.005,-0.101],[10.7,5.945,4.186,-0.112,-0.001,5.693,4.242,-0.086,0.11688,0.02289,0,4.635,-0.014,-0.112],[10.9,6.034,4.176,-0.125,-0.001,5.693,4.242,-0.086,0.11688,0.02289,0,4.725,-0.025,-0.124],[11.1,6.123,4.164,-0.135,-0.001,5.947,4.204,-0.131,0.11791,0.02237,0,4.822,-0.037,-0.136],[11.3,6.211,4.152,-0.148,-0.001,5.947,4.204,-0.131,0.11791,0.02237,0,4.91,-0.05,-0.149],[11.5,6.297,4.138,-0.161,-0.001,5.947,4.204,-0.131,0.11791,0.02237,0,4.996,-0.063,-0.162],[11.7,6.386,4.123,-0.168,-0.001,6.198,4.155,-0.177,0.12351,0.02463,0,5.085,-0.078,-0.167],[11.9,6.474,4.109,-0.15,-0.001,6.198,4.155,-0.177,0.12351,0.02463,0,5.173,-0.093,-0.148],[12.1,6.563,4.097,-0.118,-0.001,6.198,4.155,-0.177,0.12351,0.02463,0,5.262,-0.104,-0.117],[12.3,6.652,4.088,-0.081,-0.001,6.473,4.108,-0.078,0.13165,0.02881,0,5.351,-0.113,-0.079],[12.5,6.74,4.083,-0.043,-0.001,6.473,4.108,-0.078,0.13165,0.02881,0,5.447,-0.119,-0.038],[12.7,6.829,4.08,-0.005,-0.001,6.473,4.108,-0.078,0.13165,0.02881,0,5.537,-0.12,0.004],[13.0,6.963,4.086,0.089,-0.001,6.717,4.1,0.037,0.14216,0.03365,0,5.671,-0.113,0.098],[13.3,7.096,4.103,0.182,-0.001,6.717,4.1,0.037,0.14216,0.03365,0,5.804,-0.094,0.191],[13.6,7.227,4.133,0.274,-0.001,6.983,4.123,0.207,0.16032,0.04117,0,5.935,-0.062,0.283],[13.9,7.354,4.175,0.367,-0.001,6.983,4.123,0.207,0.16032,0.04117,0,6.063,-0.019,0.376],[14.3,7.497,4.239,0.476,-0.001,7.274,4.212,0.394,0.15805,0.0527,0,6.185,0.036,0.469],[14.6,7.614,4.305,0.559,-0.001,7.274,4.212,0.394,0.15805,0.0527,0,6.31,0.107,0.558],[14.9,7.724,4.381,0.652,-0.001,7.534,4.378,0.627,0.15385,0.07082,0,6.42,0.183,0.652],[15.3,7.86,4.497,0.771,-0.001,7.534,4.378,0.627,0.15385,0.07082,0,6.556,0.299,0.77],[15.6,7.952,4.594,0.86,-0.001,7.76,4.592,0.828,0.15422,0.07845,0,6.648,0.396,0.859],[15.9,8.032,4.696,0.954,-0.001,7.76,4.592,0.828,0.15422,0.07845,0,6.734,0.506,0.958],[16.3,8.11,4.832,1.023,0.001,7.76,4.592,0.828,0.15422,0.07845,0,6.828,0.654,1.05],[16.6,8.121,4.837,0.918,-0.009,7.964,4.865,1.039,0.19354,0.09182,0,6.888,0.769,1.147],[16.9,8.123,4.837,0.909,-0.015,7.964,4.865,1.039,0.19354,0.09182,0,6.937,0.891,1.23],[17.3,8.125,4.846,0.822,-0.019,8.039,5.111,1.201,0.25426,0.13285,0,6.986,1.069,1.365],[17.6,8.142,4.861,0.747,-0.005,8.014,5.383,1.4,0.38631,0.18325,0,7.009,1.201,1.434],[17.8,8.151,4.861,1.037,0.026,8.014,5.383,1.4,0.38631,0.18325,0,7.017,1.29,1.533]],"cliff":[],"conf":null,"cliffGrid":{"frame":"map","ox":0.0,"oy":1.5,"res":0.1},"keepout":[],"video":"S2_P0_1/video.mp4"}],"conf":{}};
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const G = DATA.geom;
+const OUTCOME = { fall: "추락", arrived: "도착", failed: "Nav2 포기", timeout: "시간 초과", canceled: "취소", unknown: "?" };
+const runs = DATA.runs;
+const byKey = {};
+runs.forEach(r => { (byKey[r.scenario + "_" + r.condition] ||= []).push(r); });
+let scen = DATA.scenarios.find(s => byKey[s + "_P0"]) || DATA.scenarios[0];
+let cond = "P0";
+let cur = null, playing = false, simT = 0, lastFrame = null;
+
+$("#meta").textContent = `회차 ${runs.length}개 · 생성 ${DATA.generated} · Gazebo ${DATA.gazebo} · ROS 2 Humble · Nav2 기본 파라미터`;
+
+// ---------- 좌표 ----------
+const OH = G.overhead, OS = (OH.w / 2) / Math.tan(OH.hfov / 2) / OH.z;   // 바닥에서 px/m
+function w2p(x, y, k) { return [(OH.w / 2 + (x - OH.x) * OS) * k, (OH.h / 2 - (y - OH.y) * OS) * k]; }
+function tf(gt, est) {   // map 프레임 점 → 실제 세상: T_gt ∘ T_est⁻¹
+  if (!est) return (x, y) => [x, y];
+  const d = gt[2] - est[2], c = Math.cos(d), s = Math.sin(d);
+  return (x, y) => { const dx = x - est[0], dy = y - est[1]; return [gt[0] + c * dx - s * dy, gt[1] + s * dx + c * dy]; };
+}
+function edgeDist(x, y) {
+  let best = -1e9;
+  for (const v of Object.values(G.voids)) {
+    const [x0, y0, x1, y1] = v;
+    const dx = Math.max(x0 - x, 0, x - x1), dy = Math.max(y0 - y, 0, y - y1);
+    const d = (dx === 0 && dy === 0) ? Math.min(x - x0, x1 - x, y - y0, y1 - y) : -Math.hypot(dx, dy);
+    best = Math.max(best, d);
+  }
+  return -best;
+}
+
+// ---------- 지도 ----------
+function drawMap() {
+  const cv = $("#mapCv"), img = new Image();
+  img.onload = () => {
+    const k = 3, M = DATA.map;
+    cv.width = img.width * k; cv.height = img.height * k;
+    const c = cv.getContext("2d");
+    c.imageSmoothingEnabled = false;
+    c.drawImage(img, 0, 0, cv.width, cv.height);
+    const px = (x, y) => [(x - M.ox) / M.res * k, cv.height - (y - M.oy) / M.res * k];
+    c.strokeStyle = css("--void"); c.lineWidth = 2.5; c.setLineDash([]);
+    for (const [name, v] of Object.entries(G.voids)) {
+      const [a, b] = px(v[0], v[3]), [e, f] = px(v[2], v[1]);
+      c.strokeRect(a, b, e - a, f - b);
+      c.fillStyle = css("--void"); c.font = "bold 22px system-ui"; c.fillText("계단 " + name, a + 8, b + 26);
+    }
+    const [sx, sy] = px(G.start[0], G.start[1]), [gx, gy] = px(G.goal[0], G.goal[1]);
+    c.fillStyle = css("--est"); c.beginPath(); c.arc(sx, sy, 9, 0, 7); c.fill();
+    c.fillStyle = css("--ok"); c.beginPath(); c.arc(gx, gy, 9, 0, 7); c.fill();
+    c.fillStyle = css("--text-2"); c.font = "18px system-ui";
+    c.fillText("출발", sx + 12, sy + 6); c.fillText("목표", gx - 50, gy + 6);
+  };
+  img.src = DATA.map.png;
+}
+
+// ---------- 선택 UI ----------
+function buildUI() {
+  $("#scenList").innerHTML = DATA.scenarios.map(s => `<div style="margin:3px 0"><b>${s}</b> ${DATA.scenLabels[s]} — <span class="note">${DATA.scenDesc[s]}</span></div>`).join("");
+  $("#condList").innerHTML = DATA.conditions.map(c => `<div style="margin:3px 0"><span class="dot" style="background:var(--c-${c})"></span> <b>${c}</b> ${DATA.condLabels[c]}</div>`).join("");
+  $("#scenSeg").innerHTML = DATA.scenarios.map(s => `<button data-s="${s}" aria-pressed="${s === scen}">${s} ${DATA.scenLabels[s]}</button>`).join("");
+  $("#scenSeg").onclick = e => { const b = e.target.closest("button"); if (b) { scen = b.dataset.s; select(); } };
+  $("#condChips").innerHTML = DATA.conditions.map(c => `<button class="chip" data-c="${c}" aria-pressed="${c === cond}"><span class="dot" style="background:var(--c-${c})"></span>${c}</button>`).join("");
+  $("#condChips").onclick = e => { const b = e.target.closest("button"); if (b) { cond = b.dataset.c; select(); } };
+}
+function select() {
+  document.querySelectorAll("#scenSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.s === scen));
+  document.querySelectorAll("#condChips button").forEach(b => {
+    b.setAttribute("aria-pressed", b.dataset.c === cond);
+    b.disabled = !byKey[scen + "_" + b.dataset.c]; b.style.opacity = b.disabled ? .4 : 1;
+  });
+  cur = (byKey[scen + "_" + cond] || [])[0] || null;
+  playing = false; $("#play").textContent = "재생";
+  const v = $("#vid");
+  if (cur && cur.video) { v.src = cur.video; v.style.display = ""; v.load(); } else { v.removeAttribute("src"); v.style.display = "none"; }
+  simT = 0; $("#seek").value = 0;
+  $("#runTitle").textContent = cur ? `${scen} ${DATA.scenLabels[scen]} · ${cond} ${DATA.condLabels[cond]}` : "회차 없음";
+  const st = $("#status");
+  st.className = "status " + (cur ? cur.outcome : "");
+  st.textContent = cur ? `${OUTCOME[cur.outcome] || cur.outcome} · ${cur.time.toFixed(1)} s` : "–";
+  $("#events").innerHTML = cur ? [{ t: 0, kind: "start" }, ...cur.events, ...(cur.outcome === "arrived" ? [{ t: cur.time, kind: "arrived" }] : [])]
+    .map(e => `<li data-t="${e.t}"><span>${({ start: "출발", push: `밀림 ${e.dx} m (인코더 모름)`, recovery: `복구 동작 #${e.n} (회전·후진)`, fall: "추락", arrived: "도착", leave: "사람들 흩어짐", retry: `Nav2 포기 → 목표 다시 보냄 #${e.n}`, resend: "목표 다시 보냄 (출발 TF 경합)", sim_stalled: "시뮬 멈춤" })[e.kind] || e.kind}</span><span class="note">${(+e.t).toFixed(1)} s</span></li>`).join("") : "";
+  drawEdgeChart();
+  render();
+}
+$("#events").onclick = e => { const li = e.target.closest("li"); if (li && cur) seekTo(Math.max(0, +li.dataset.t - 1)); };
+
+// ---------- 시간 ----------
+// 프레임은 sim 시각 frame_t[i]에 저장되고 영상은 8 fps 고정 → 시각표로 서로 바꾼다
+function vidTime(t) {
+  const ft = cur.frame_t || []; if (!ft.length) return t / 2;
+  let lo = 0, hi = ft.length - 1;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (ft[m] <= t) lo = m; else hi = m - 1; }
+  return (lo + 0.5) / 8;
+}
+function simTime(v) {
+  const ft = cur.frame_t || []; if (!ft.length) return v * 2;
+  const x = v * 8 - 0.5, i = Math.max(0, Math.min(ft.length - 1, Math.floor(x)));
+  const j = Math.min(ft.length - 1, i + 1), f = Math.max(0, Math.min(1, x - i));
+  return ft[i] + (ft[j] - ft[i]) * f;
+}
+function duration() { return cur ? (cur.track.length ? cur.track[cur.track.length - 1][0] : 0) : 0; }
+function seekTo(t) {
+  simT = Math.max(0, Math.min(duration(), t));
+  const v = $("#vid");
+  if (cur && cur.video && v.readyState >= 1) v.currentTime = Math.min(v.duration || 0, vidTime(simT));
+  $("#seek").value = duration() ? Math.round(simT / duration() * 1000) : 0;
+  render();
+}
+$("#seek").oninput = e => seekTo(+e.target.value / 1000 * duration());
+$("#play").onclick = () => {
+  if (!cur) return;
+  playing = !playing; $("#play").textContent = playing ? "멈춤" : "재생";
+  if (playing && simT >= duration() - 0.05) seekTo(0);
+  const v = $("#vid");
+  if (cur.video) { v.playbackRate = +$("#speed").value; playing ? v.play() : v.pause(); }
+  lastFrame = null; requestAnimationFrame(tick);
+};
+$("#speed").onchange = () => { $("#vid").playbackRate = +$("#speed").value; };
+$("#vid").onended = () => { playing = false; $("#play").textContent = "재생"; };
+function tick(ts) {
+  if (!playing) return;
+  const v = $("#vid");
+  if (cur.video && !v.paused) simT = simTime(v.currentTime);
+  else { if (lastFrame != null) simT += (ts - lastFrame) / 1000 * 2 * +$("#speed").value; }
+  lastFrame = ts;
+  if (simT >= duration()) { simT = duration(); playing = false; $("#play").textContent = "재생"; }
+  $("#seek").value = duration() ? Math.round(simT / duration() * 1000) : 0;
+  render();
+  if (playing) requestAnimationFrame(tick);
+}
+
+// ---------- 그리기 ----------
+function at(t) {   // 시각 t의 track 행 (이진 탐색)
+  const tr = cur.track; let lo = 0, hi = tr.length - 1;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (tr[m][0] <= t) lo = m; else hi = m - 1; }
+  return { i: lo, r: tr[lo] };
+}
+function cliffAt(t) {
+  const cl = cur.cliff; if (!cl || !cl.length) return null;
+  let best = null; for (const e of cl) { if (e.t <= t + 0.01) best = e; else break; } return best;
+}
+function render() {
+  const cv = $("#ov"), stage = $("#stage");
+  const W = stage.clientWidth, H = stage.clientHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const k = W / OH.w;
+  const P = (x, y) => w2p(x, y, k);
+  if (!cur) return;
+  if (!cur.video) drawBackdrop(c, k);
+  const { i, r } = at(simT);
+  const gt = [r[1], r[2], r[3]], est = r[5] != null ? [r[5], r[6], r[7]] : null;
+  const T = tf(gt, est);
+  // 실제 계단 가장자리
+  c.setLineDash([3, 4]); c.strokeStyle = css("--void"); c.lineWidth = 1.5;
+  for (const v of Object.values(G.voids)) { const [a, b] = P(v[0], v[3]), [e, f] = P(v[2], v[1]); c.strokeRect(a, b, e - a, f - b); }
+  c.setLineDash([]);
+  // keepout (로봇이 믿는 자리)
+  if (cur.keepout && cur.keepout.length) {
+    c.fillStyle = css("--keep"); c.strokeStyle = css("--void"); c.lineWidth = 1.5;
+    for (const name of cur.keepout) {
+      const v = G.voids[name], m = G.keepoutMargin;
+      const pts = [[v[0] - m, v[1] - m], [v[2] + m, v[1] - m], [v[2] + m, v[3] + m], [v[0] - m, v[3] + m]].map(([x, y]) => P(...T(x, y)));
+      c.beginPath(); pts.forEach(([x, y], j) => j ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); c.fill(); c.stroke();
+    }
+  }
+  // 낭떠러지 셀
+  const ce = cliffAt(simT);
+  if (ce && (cur.cliffGrid.frame !== "odom" || r[11] != null)) {
+    const cg = cur.cliffGrid, res = cg.res, ox = cg.ox, oy = cg.oy;
+    // 격자 프레임 → 실제 세상: map이면 T_gt∘T_amcl⁻¹, odom이면 T_gt∘T_odom⁻¹
+    const od = r[11] != null ? [r[11], r[12], r[13]] : null;
+    const Tc = cg.frame === "odom" ? (od ? tf(gt, od) : null) : T;
+    const cell = (code, col) => {
+      const ix = Math.floor(code / 1000), iy = code % 1000;
+      const corners = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([a, b]) => P(...Tc(ox + (ix + a) * res, oy + (iy + b) * res)));
+      c.fillStyle = col; c.beginPath(); corners.forEach(([x, y], j) => j ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); c.fill();
+    };
+    (ce.caution || []).forEach(code => cell(code, css("--caution")));
+    (ce.lethal || []).forEach(code => cell(code, css("--cliff")));
+  }
+  // 경로
+  const tr = cur.track;
+  c.lineWidth = 2.2; c.strokeStyle = css("--truth"); c.beginPath();
+  for (let j = 0; j <= i; j++) { const [x, y] = P(tr[j][1], tr[j][2]); j ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+  c.setLineDash([6, 4]); c.strokeStyle = css("--est"); c.beginPath(); let started = false;
+  for (let j = 0; j <= i; j++) { if (tr[j][5] == null) continue; const [x, y] = P(tr[j][5], tr[j][6]); started ? c.lineTo(x, y) : c.moveTo(x, y); started = true; } c.stroke();
+  c.setLineDash([]);
+  // 로봇
+  const rr = G.robotR * OS * k;
+  if (est) { const [x, y] = P(est[0], est[1]); c.strokeStyle = css("--est"); c.setLineDash([4, 3]); c.lineWidth = 2;
+    c.beginPath(); c.arc(x, y, rr, 0, 7); c.stroke(); c.setLineDash([]);
+    c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(est[2]) * rr * 1.5, y - Math.sin(est[2]) * rr * 1.5); c.stroke(); }
+  { const [x, y] = P(gt[0], gt[1]); c.strokeStyle = css("--truth"); c.lineWidth = 2.5;
+    c.beginPath(); c.arc(x, y, rr, 0, 7); c.stroke();
+    c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(gt[2]) * rr * 1.5, y - Math.sin(gt[2]) * rr * 1.5); c.stroke(); }
+  // 사람 (영상 없을 때)
+  if (!cur.video) { c.fillStyle = "rgba(42,120,214,.7)"; for (const [, x, y] of cur.people) { const [a, b] = P(x, y); c.beginPath(); c.arc(a, b, G.personR * OS * k, 0, 7); c.fill(); } }
+  // 상태
+  const ed = edgeDist(gt[0], gt[1]);
+  $("#edgeNow").textContent = r[4] < -0.1 ? "추락" : ed.toFixed(2);
+  const err = est ? Math.hypot(gt[0] - est[0], gt[1] - est[1]) : null;
+  const cov = r[8] ? Math.sqrt(Math.max(r[8], r[9])) : null;
+  $("#live").innerHTML = [
+    ["시각", simT.toFixed(1) + " s"],
+    ["AMCL 위치 오차 (실제)", err != null ? (err * 100).toFixed(0) + " cm" : "–"],
+    ["AMCL이 말하는 σ", cov != null ? (cov * 100).toFixed(0) + " cm" : "–"],
+    ["복구 동작", (r[10] || 0) + "회"],
+    ["가장자리 최소 (이 회차)", cur.min_edge.toFixed(2) + " m"],
+  ].map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
+  drawEdgeChart(true);
+}
+function drawBackdrop(c, k) {
+  if (!drawBackdrop.img) { drawBackdrop.img = new Image(); drawBackdrop.img.onload = render; drawBackdrop.img.src = DATA.map.png; return; }
+  const M = DATA.map, img = drawBackdrop.img;
+  const [a, b] = w2p(M.ox, M.oy + img.height * M.res, k), [e, f] = w2p(M.ox + img.width * M.res, M.oy, k);
+  c.globalAlpha = .55; c.imageSmoothingEnabled = false; c.drawImage(img, a, b, e - a, f - b); c.globalAlpha = 1;
+}
+function drawEdgeChart(cursorOnly) {
+  const svg = $("#edgeChart"), Wc = 260, Hc = 160, L = 34, R = 8, T = 8, B = 22;
+  const list = DATA.conditions.map(c => (byKey[scen + "_" + c] || [])[0]).filter(Boolean);
+  const tmax = Math.max(10, ...list.map(r => r.track.length ? r.track[r.track.length - 1][0] : 0));
+  const ymax = 3, ymin = -0.6;
+  const X = t => L + t / tmax * (Wc - L - R), Y = d => T + (ymax - Math.max(ymin, Math.min(ymax, d))) / (ymax - ymin) * (Hc - T - B);
+  if (!cursorOnly || !svg.dataset.k || svg.dataset.k !== scen) {
+    let s = "";
+    for (const d of [0, 1, 2, 3]) s += `<line class="grid" x1="${L}" x2="${Wc - R}" y1="${Y(d)}" y2="${Y(d)}"/><text x="${L - 5}" y="${Y(d) + 4}" text-anchor="end">${d}</text>`;
+    s += `<line x1="${L}" x2="${Wc - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="${css("--void")}" stroke-width="1.2"/>`;
+    s += `<text x="${Wc - R}" y="${Y(0) + 13}" text-anchor="end" style="fill:var(--void)">가장자리</text>`;
+    for (const t of [0, Math.round(tmax / 2), Math.round(tmax)]) s += `<text x="${X(t)}" y="${Hc - 6}" text-anchor="middle">${t}s</text>`;
+    for (const r of list) {
+      const pts = r.track.filter((_, j) => j % 2 === 0).map(q => `${X(q[0]).toFixed(1)},${Y(q[4] < -0.1 ? -1 : edgeDist(q[1], q[2])).toFixed(1)}`).join(" ");
+      const on = r.condition === cond;
+      s += `<polyline points="${pts}" fill="none" stroke="var(--c-${r.condition})" stroke-width="${on ? 2.4 : 1.3}" opacity="${on ? 1 : .55}"/>`;
+    }
+    s += `<line id="cur" y1="${T}" y2="${Hc - B}" stroke="${css("--text-2")}" stroke-dasharray="2 2"/>`;
+    svg.innerHTML = s; svg.dataset.k = scen + cond;
+  }
+  const cl = svg.querySelector("#cur"); if (cl) { cl.setAttribute("x1", X(simT)); cl.setAttribute("x2", X(simT)); }
+}
+
+// ---------- 결과표 ----------
+function buildMatrix() {
+  let h = `<tr><th>시나리오</th>${DATA.conditions.map(c => `<th><span class="dot" style="background:var(--c-${c})"></span> ${c} ${DATA.condLabels[c]}</th>`).join("")}</tr>`;
+  for (const s of DATA.scenarios) {
+    h += `<tr><td><b>${s}</b> ${DATA.scenLabels[s]}</td>`;
+    for (const c of DATA.conditions) {
+      const rs = byKey[s + "_" + c] || [];
+      if (!rs.length) { h += `<td class="note">–</td>`; continue; }
+      const n = rs.length, falls = rs.filter(r => r.outcome === "fall").length, arr = rs.filter(r => r.outcome === "arrived").length;
+      const r = rs[0];
+      const head = n === 1 ? `<span class="status ${r.outcome}">${OUTCOME[r.outcome] || r.outcome}</span>`
+        : `<span class="status ${falls ? "fall" : "arrived"}">추락 ${falls}/${n}</span> <span class="note">도착 ${arr}/${n}</span>`;
+      const amclMax = Math.max(...rs.map(x => Math.max(0, ...x.track.filter(q => q[5] != null).map(q => Math.hypot(q[1] - q[5], q[2] - q[6])))));
+      const bits = [n === 1 ? r.time.toFixed(0) + " s" : null, `가장자리 최소 ${Math.min(...rs.map(x => x.min_edge)).toFixed(2)} m`,
+        `AMCL 최대 오차 ${(amclMax * 100).toFixed(0)} cm`,
+        rs.some(x => x.recoveries) ? `복구 ${rs.reduce((a, x) => a + x.recoveries, 0)}회` : null,
+        rs.some(x => x.retried) ? `재시도 ${rs.reduce((a, x) => a + (x.retried || 0), 0)}회` : null].filter(Boolean);
+      h += `<td class="cell" data-s="${s}" data-c="${c}">${head}<div class="note" style="margin-top:4px">${bits.join(" · ")}</div></td>`;
+    }
+    h += "</tr>";
+  }
+  $("#matrix").innerHTML = h;
+  $("#matrix").onclick = e => { const td = e.target.closest("td.cell"); if (td) { scen = td.dataset.s; cond = td.dataset.c; select(); $("#stage").scrollIntoView({ behavior: "smooth", block: "center" }); } };
+}
+function buildFindings() {
+  const run = (s, c) => (byKey[s + "_" + c] || [])[0];
+  const li = [];
+  for (const c of DATA.conditions) {
+    const ran = DATA.scenarios.filter(s => run(s, c));
+    if (!ran.length) continue;
+    const name = s => s + " " + DATA.scenLabels[s];
+    const fell = ran.filter(s => run(s, c).outcome === "fall");
+    const ok = ran.filter(s => run(s, c).outcome === "arrived");
+    const stuck = ran.filter(s => !["fall", "arrived"].includes(run(s, c).outcome));
+    const parts = [fell.length ? `<span style="color:var(--bad)">${fell.map(name).join(", ")}에서 추락</span>` : "추락 없음",
+                   `도착 ${ok.length}/${ran.length}`];
+    if (stuck.length) parts.push(`${stuck.map(name).join(", ")}에서 가장자리 앞에 갇혀 임무 실패(안전 정지)`);
+    const base = c !== "P1" ? ran.filter(s => run(s, "P1") && run(s, "P1").outcome === "arrived" && run(s, c).outcome === "arrived") : [];
+    if (base.length) {
+      const dt = base.reduce((a, s) => a + run(s, c).time - run(s, "P1").time, 0) / base.length;
+      parts.push(`P1과 둘 다 도착한 시나리오에서 평균 ${dt >= 0 ? "+" : ""}${dt.toFixed(1)} s`);
+    }
+    li.push(`<b>${c} ${DATA.condLabels[c]}</b>: ${parts.join(" · ")}`);
+  }
+  $("#findings").innerHTML = `<b>한 줄씩</b><ul>${li.map(x => `<li>${x}</li>`).join("")}</ul><div class="note" style="margin-top:6px">자동 요약 — 표의 결과에서 그대로 만든 문장이다. 시드 1회씩이라 경향만 본다.</div>`;
+}
+function buildCM() {
+  const wrap = $("#cmWrap"); let h = "";
+  for (const c of DATA.conditions) {
+    const cm = DATA.conf[c]; if (!cm) continue;
+    const { TP, FP, FN, TN } = cm, P = TP / Math.max(1, TP + FP), R = TP / Math.max(1, TP + FN), F = 2 * P * R / Math.max(1e-9, P + R);
+    h += `<div class="card"><h3><span class="dot" style="background:var(--c-${c})"></span> ${c} ${DATA.condLabels[c]}</h3>
+      <div class="cm"><div class="h"></div><div class="h">실제 계단</div><div class="h">실제 바닥</div>
+      <div class="h" style="text-align:left">낭떠러지 판정</div><div class="good">${TP.toLocaleString()}</div><div class="badc">${FP.toLocaleString()}</div>
+      <div class="h" style="text-align:left">바닥 판정</div><div class="badc">${FN.toLocaleString()}</div><div class="good">${TN.toLocaleString()}</div></div>
+      <dl class="stat" style="margin-top:10px"><dt>정밀도 (판정 중 진짜)</dt><dd>${(P * 100).toFixed(1)} %</dd>
+      <dt>재현율 (계단 중 잡은 것)</dt><dd>${(R * 100).toFixed(1)} %</dd><dt>F1</dt><dd>${F.toFixed(3)}</dd>
+      <dt>가짜 낭떠러지 셀-프레임</dt><dd>${FP.toLocaleString()}</dd></dl></div>`;
+  }
+  wrap.innerHTML = h || `<div class="note">깊이카메라 조건 회차가 아직 없다.</div>`;
+}
+
+drawMap(); buildUI(); buildMatrix(); buildFindings(); buildCM(); select();
+window.addEventListener("resize", () => render());
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { drawMap(); select(); });
+</script>
+</body>
+</html>

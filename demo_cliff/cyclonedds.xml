@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 컴퓨터 안(루프백)에서만 통신. lo는 멀티캐스트가 안 되므로 유니캐스트 + 참가자 번호 상한을 넉넉히 (한 회차 노드 약 40개).
+     기본 상한(9)에서는 'Failed to find a free participant index'로 노드 생성이 실패하고, 와이파이가 끊기면 같은 일이 난다. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <Interfaces><NetworkInterface name="lo"/></Interfaces>
+      <AllowMulticast>false</AllowMulticast>
+    </General>
+    <Discovery>
+      <ParticipantIndex>auto</ParticipantIndex>
+      <MaxAutoParticipantIndex>80</MaxAutoParticipantIndex>
+      <Peers><Peer address="localhost"/></Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

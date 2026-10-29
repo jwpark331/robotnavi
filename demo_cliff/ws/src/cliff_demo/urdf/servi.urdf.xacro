@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!-- 서빙로봇형 차동구동 로봇: 가운데 구동륜 2개 + 앞뒤 캐스터, 앞쪽 270° LiDAR, 기둥 위 하향 깊이카메라. 뒤쪽은 센서 없음. -->
+<robot name="servi" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="wr" value="0.06"/>      <!-- 바퀴 반지름 -->
+  <xacro:property name="ws" value="0.40"/>      <!-- 바퀴 간격 -->
+  <xacro:property name="br" value="0.25"/>      <!-- 몸체 반지름 -->
+
+  <xacro:macro name="cyl_inertia" params="m r l">
+    <inertia ixx="${m*(3*r*r+l*l)/12}" iyy="${m*(3*r*r+l*l)/12}" izz="${m*r*r/2}" ixy="0" ixz="0" iyz="0"/>
+  </xacro:macro>
+
+  <link name="base_footprint"/>
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/><child link="base_link"/><origin xyz="0 0 ${wr}"/>
+  </joint>
+
+  <link name="base_link">
+    <visual><origin xyz="0 0 0.095"/><geometry><cylinder radius="${br}" length="0.25"/></geometry>
+      <material name="body"><color rgba="0.95 0.95 0.95 1"/></material></visual>
+    <collision><origin xyz="0 0 0.095"/><geometry><cylinder radius="${br}" length="0.25"/></geometry></collision>
+    <visual><origin xyz="-0.08 0 0.445"/><geometry><cylinder radius="0.08" length="0.45"/></geometry></visual>
+    <collision><origin xyz="-0.08 0 0.445"/><geometry><cylinder radius="0.08" length="0.45"/></geometry></collision>
+    <visual><origin xyz="-0.04 0 0.685"/><geometry><cylinder radius="0.22" length="0.03"/></geometry></visual>
+    <inertial><origin xyz="0.02 0 0.13"/><mass value="14.0"/><xacro:cyl_inertia m="14.0" r="${br}" l="0.4"/></inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="side y">
+    <link name="${side}_wheel">
+      <visual><origin rpy="${pi/2} 0 0"/><geometry><cylinder radius="${wr}" length="0.04"/></geometry>
+        <material name="tire"><color rgba="0.1 0.1 0.1 1"/></material></visual>
+      <!-- 충돌은 구: 원통 바퀴는 ODE에서 바닥 판 이음매·얇은 상자 모서리에 걸려 멈춘다 -->
+      <collision><geometry><sphere radius="${wr}"/></geometry></collision>
+      <inertial><mass value="0.5"/><xacro:cyl_inertia m="0.5" r="${wr}" l="0.04"/></inertial>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="base_link"/><child link="${side}_wheel"/><origin xyz="0 ${y} 0"/><axis xyz="0 1 0"/>
+    </joint>
+    <gazebo reference="${side}_wheel"><mu1>1.2</mu1><mu2>1.2</mu2><kp>1e6</kp><kd>10</kd><minDepth>0.001</minDepth><maxVel>0.1</maxVel></gazebo>
+  </xacro:macro>
+  <xacro:wheel side="left" y="${ws/2}"/>
+  <xacro:wheel side="right" y="${-ws/2}"/>
+
+  <xacro:macro name="caster" params="name x z">
+    <link name="${name}">
+      <collision><geometry><sphere radius="0.03"/></geometry></collision>
+      <inertial><mass value="0.1"/><inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed"><parent link="base_link"/><child link="${name}"/><origin xyz="${x} 0 ${z}"/></joint>
+    <gazebo reference="${name}"><mu1>0.0</mu1><mu2>0.0</mu2><kp>1e6</kp><kd>10</kd></gazebo>
+  </xacro:macro>
+  <xacro:caster name="front_caster" x="0.17" z="-0.03"/>
+  <!-- 뒤 캐스터는 4 mm 띄워 3점 지지 (바퀴에 하중이 실리게) -->
+  <xacro:caster name="rear_caster" x="-0.17" z="-0.026"/>
+
+  <!-- LiDAR: 몸체 윗면 앞쪽, 바닥에서 32 cm. 뒤쪽 90°는 기둥이 가려 시야에서 뺀다. -->
+  <link name="laser"/>
+  <joint name="laser_joint" type="fixed"><parent link="base_link"/><child link="laser"/><origin xyz="0.10 0 0.26"/></joint>
+  <gazebo reference="laser">
+    <sensor name="lidar" type="ray">
+      <update_rate>10</update_rate><visualize>false</visualize>
+      <ray>
+        <scan><horizontal><samples>270</samples><resolution>1</resolution>
+          <min_angle>-2.356</min_angle><max_angle>2.356</max_angle></horizontal></scan>
+        <range><min>0.10</min><max>8.0</max><resolution>0.01</resolution></range>
+        <noise><type>gaussian</type><mean>0.0</mean><stddev>0.01</stddev></noise>
+      </ray>
+      <plugin name="lidar" filename="libgazebo_ros_ray_sensor.so">
+        <ros><remapping>~/out:=scan</remapping></ros>
+        <output_type>sensor_msgs/LaserScan</output_type><frame_name>laser</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- 깊이카메라: 기둥 앞면, 바닥에서 66 cm, 45° 아래로. D435급 시야(86°×58°)를 160×120으로 줄여 쓴다. -->
+  <link name="camera_link"/>
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/><child link="camera_link"/><origin xyz="0.0 0 0.60" rpy="0 0.785 0"/>
+  </joint>
+  <link name="camera_optical"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/><child link="camera_optical"/><origin rpy="${-pi/2} 0 ${-pi/2}"/>
+  </joint>
+  <gazebo reference="camera_link">
+    <sensor name="depth" type="depth">
+      <update_rate>10</update_rate><always_on>true</always_on>
+      <camera>
+        <horizontal_fov>1.50</horizontal_fov>
+        <image><width>160</width><height>120</height><format>R8G8B8</format></image>
+        <clip><near>0.15</near><far>4.0</far></clip>
+        <noise><type>gaussian</type><mean>0.0</mean><stddev>0.006</stddev></noise>
+      </camera>
+      <plugin name="depth_cam" filename="libgazebo_ros_camera.so">
+        <ros><namespace>/depth_cam</namespace></ros>
+        <camera_name>depth_cam</camera_name><frame_name>camera_optical</frame_name>
+        <min_depth>0.15</min_depth><max_depth>4.0</max_depth>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- 하향 IR 낭떠러지 센서 4개 (룸바식): 몸체 앞쪽 가장자리, 바닥 위 2.5 cm에서 수직 아래. P1i 조건에서만 ir_guard가 쓴다. -->
+  <xacro:macro name="ir" params="name a">
+    <link name="ir_${name}"/>
+    <joint name="ir_${name}_joint" type="fixed">
+      <parent link="base_link"/><child link="ir_${name}"/>
+      <origin xyz="${0.24*cos(radians(a))} ${0.24*sin(radians(a))} -0.035" rpy="0 ${pi/2} 0"/>
+    </joint>
+    <gazebo reference="ir_${name}">
+      <sensor name="ir_${name}" type="ray">
+        <update_rate>20</update_rate><visualize>false</visualize>
+        <ray>
+          <scan><horizontal><samples>1</samples><resolution>1</resolution><min_angle>0</min_angle><max_angle>0</max_angle></horizontal></scan>
+          <range><min>0.005</min><max>0.25</max><resolution>0.001</resolution></range>
+          <noise><type>gaussian</type><mean>0.0</mean><stddev>0.003</stddev></noise>
+        </ray>
+        <plugin name="ir_${name}" filename="libgazebo_ros_ray_sensor.so">
+          <ros><namespace>/ir</namespace><remapping>~/out:=${name}</remapping></ros>
+          <output_type>sensor_msgs/Range</output_type><radiation_type>infrared</radiation_type>
+          <frame_name>ir_${name}</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  <xacro:ir name="r60" a="-60"/>
+  <xacro:ir name="r20" a="-20"/>
+  <xacro:ir name="l20" a="20"/>
+  <xacro:ir name="l60" a="60"/>
+
+  <gazebo>
+    <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <update_rate>50</update_rate>
+      <left_joint>left_wheel_joint</left_joint><right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${ws}</wheel_separation><wheel_diameter>${2*wr}</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque><max_wheel_acceleration>3.0</max_wheel_acceleration>
+      <publish_odom>true</publish_odom><publish_odom_tf>true</publish_odom_tf><publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_frame>odom</odometry_frame><robot_base_frame>base_footprint</robot_base_frame>
+      <odometry_source>0</odometry_source>  <!-- 0 = 바퀴 인코더 (밀려서 생긴 이동은 모른다) -->
+      <ros><remapping>cmd_vel:=cmd_vel_hw</remapping></ros>  <!-- 바퀴는 ir_guard를 거친 명령만 받는다 -->
+    </plugin>
+    <plugin name="joint_states" filename="libgazebo_ros_joint_state_publisher.so">
+      <update_rate>20</update_rate><joint_name>left_wheel_joint</joint_name><joint_name>right_wheel_joint</joint_name>
+    </plugin>
+    <plugin name="ground_truth" filename="libgazebo_ros_p3d.so">
+      <ros><remapping>odom:=ground_truth</remapping></ros>
+      <body_name>base_footprint</body_name><frame_name>world</frame_name><update_rate>20</update_rate>
+    </plugin>
+  </gazebo>
+</robot>
