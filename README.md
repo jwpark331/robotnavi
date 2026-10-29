@@ -29,7 +29,7 @@
 Ubuntu 22.04 기준이다. 경로는 어디든 되지만, 문서와 맞추려면 `~/robotnavi`에 받는다.
 
 ```bash
-git clone https://github.com/<계정>/invisible-stairs.git ~/robotnavi
+git clone https://github.com/jwpark331/robotnavi.git ~/robotnavi
 ```
 
 ROS 2 Humble이 아직 없으면 먼저 설치한다.
