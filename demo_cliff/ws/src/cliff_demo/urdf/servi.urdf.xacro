@@ -124,6 +124,9 @@
   <xacro:ir name="r20" a="-20"/>
   <xacro:ir name="l20" a="20"/>
   <xacro:ir name="l60" a="60"/>
+  <!-- 뒤 IR 2개 (v2 10/30): P1irb에서만 ir_guard가 후진을 막는 데 쓴다. 다른 조건에서는 발행만 되고 쓰이지 않는다 -->
+  <xacro:ir name="r160" a="-160"/>
+  <xacro:ir name="l160" a="160"/>
 
   <gazebo>
     <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">

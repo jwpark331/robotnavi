@@ -370,7 +370,7 @@ class CliffDetector(Node):
             self.lethal = (self.L > L_LETHAL) | self.ir_conf
             self.caution = (self.L > L_CAUTION) & ~self.lethal
         else:
-            bad = (v_drop | v_nan).astype(np.int32)
+            bad = (v_drop | (v_nan & (not self.nan_neutral))).astype(np.int32)   # P2on: 결측은 낭떠러지 쪽으로 세지 않는다
             nb = sum(np.roll(np.roll(bad, i, 0), j, 1) for i in (-1, 0, 1) for j in (-1, 0, 1))
             now = bad.astype(bool) & (nb >= 2)
             if self.memory == "keep":                            # P2o: 칸마다 마지막 판정을 기억 (본 칸만 새로 덮어씀)

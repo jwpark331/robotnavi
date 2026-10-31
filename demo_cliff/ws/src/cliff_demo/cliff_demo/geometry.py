@@ -3,6 +3,7 @@
 좌표는 map = Gazebo world (매핑 시작 위치를 world 원점 기준으로 맞춘다). 위층 바닥 윗면은 z = 0.
 """
 import math
+import os
 
 # 벽 (꺾은선). 위층 바닥 높이에서 LiDAR가 보는 것은 이것뿐이다. 계단 구멍은 벽이 아니라 바닥이 없는 곳이라 안 보인다.
 WALLS = [
@@ -56,6 +57,7 @@ WET_PATCH = (6.0, 3.0, 8.2, 6.2)
 FLOOR_MU = 1.0
 
 START = (1.3, 4.2, 0.0)
+START_S3J = (2.3, 4.2, 0.0)        # S3j 실제 출발 (믿는 출발 2.3 − dx가 벽 안에 들어가지 않게 1 m 앞에서 출발)
 GOAL = (5.3, 8.9, math.pi)         # 사무실 안 (문은 x = 6.6, y 8.4–9.4, 폭 1.0 m)
 
 # 위에서 내려다보는 기록용 카메라 (리포트 영상). 바닥(z=0)에서 픽셀 ↔ 좌표가 선형.
@@ -78,6 +80,7 @@ ROBOT_R = 0.25
 
 # 하향 IR 낭떠러지 센서 (룸바식): 몸체 앞쪽 가장자리 4곳, 바닥 위 2.5 cm에서 수직 아래를 본다.
 IR_ANGLES = (-60, -20, 20, 60)     # 진행 방향 기준 [deg]
+IR_REAR_ANGLES = (-160, 160)       # 뒤 IR (P1irb만 쓴다, v2 10/30)
 IR_RADIUS = 0.24                   # 중심에서 [m]
 IR_CLIFF = 0.07                    # 이보다 멀면(또는 반사 없음) 낭떠러지
 KEEPOUT_MARGIN = 0.30   # 운영자가 그리는 keepout = 계단 구멍 + 30 cm (Nav2 필터는 인플레이션을 안 받으므로)
@@ -86,6 +89,9 @@ SCENARIOS = {
     "S1": dict(label="평상시", groups=[], push=False, keepout=("A", "B")),
     "S2": dict(label="계단 앞 사람들", groups=["A"], push=False, keepout=("A", "B")),
     "S3": dict(label="위치 착각", groups=[], push=True, keepout=("A", "B")),
+    # 위치 점프의 현실적 기전 (v2, 10/30): 운영자가 초기 위치를 0.8–1.0 m 뒤로 잘못 넣는다 → AMCL이 나중에 바로잡으며 map→odom이 뛴다.
+    # 실제 출발은 START_S3J, 로봇이 믿는 출발은 그보다 x로 dx 뒤 (dx는 S3 밀림과 같은 난수)
+    "S3j": dict(label="초기 위치 오입력", groups=[], push=False, keepout=("A", "B"), init_err=True),
     "S4": dict(label="keepout 안 그린 계단", groups=["B"], push=False, keepout=("A",)),
     # 움직이는 사람 (10/19 추가): 서 있는 무리 대신 5명이 무작위 위치·시각에 나타나 걸어 다닌다 (walkers.py)
     "S5": dict(label="움직이는 사람들", groups=[], push=False, keepout=("A", "B"), walkers=True),
@@ -107,8 +113,15 @@ YIELD_REST = 6.0             # 물러난 뒤 사람들이 지나갈 때까지 �
 CONDITIONS = {
     "P0": dict(label="SLAM 지도만", keepout=False, cliff=None),
     "P1": dict(label="+ Keepout (현장 관행)", keepout=True, cliff=None),
+    # 비용 띠 확인 (10/30 추가): P1과 같은 금지 구역에 카메라 마스크와 같은 0.3–0.7 m 비용 띠를 더한다 (make_masks.make_ring)
+    "P1r": dict(label="+ Keepout + 비용 띠 (카메라 마스크와 같은 모양)", keepout=True, cliff=None, keepout_ring=True),
+    # v2 현장 표준 (10/30): 띠 keepout + 앞 IR. P1irb는 뒤 IR 2개를 더해 후진도 막는다 (S8 비교군)
+    "P1ir": dict(label="+ Keepout + 비용 띠 + 앞 IR", keepout=True, cliff=None, keepout_ring=True, ir=True),
+    "P1irb": dict(label="+ Keepout + 비용 띠 + 앞·뒤 IR", keepout=True, cliff=None, keepout_ring=True, ir=True, ir_rear=True),
     "P1i": dict(label="+ 하향 IR 센서 4개 (급정지)", keepout=True, cliff=None, ir=True),
     "P2": dict(label="+ 깊이카메라 단일 프레임", keepout=True, cliff="frame", frame="odom"),
+    # v3 (10/31): 서빙로봇 처리의 대용(가정)에 앞 IR을 더한 비교군
+    "P2i": dict(label="+ 깊이카메라 단일 프레임 + 앞 IR", keepout=True, cliff="frame", frame="odom", ir=True),
     "P3m": dict(label="+ 베이즈 (기억을 map 프레임에)", keepout=True, cliff="bayes", frame="map"),
     "P3": dict(label="+ 베이즈 (기억을 odom 프레임에, 제안)", keepout=True, cliff="bayes", frame="odom"),
     # 검은 계단 실험에서 추가: 깊이카메라가 결측으로만 보는 계단을 하향 IR이 보완하는가
@@ -118,6 +131,9 @@ CONDITIONS = {
     # 피드백 1 대응 (10/21)
     # 2×2 요인 설계: 필터와 기억을 따로 바꾼다
     "P2o": dict(label="+ 깊이카메라 단일 프레임 + odom 기억", keepout=True, cliff="frame", frame="odom", memory="keep"),
+    # v2 2×2 (10/30): P2o와 같되 '값 없음'을 낭떠러지로 세지 않는다 → 베이즈 방식과 결측 처리를 맞춘다
+    "P2on": dict(label="+ 깊이카메라 단일 프레임 + odom 기억 (결측 중립)", keepout=True, cliff="frame", frame="odom", memory="keep",
+                 nan_neutral=True),
     "P3n": dict(label="+ 베이즈, 기억 없음", keepout=True, cliff="bayes", frame="odom", memory="none"),
     # P3+: 값 없음 = 모름(3상태) + 정지거리 속도 제한 + IR 기억·후진 + 지면 평면 RANSAC + 거리별 임계 + 시점 변화 게이트
     "P3p": dict(label="P3+ (3상태·속도 제한·IR 기억·지면 평면)", keepout=True, cliff="bayes", frame="odom", ir=True, plus=True),
@@ -142,3 +158,54 @@ def void_depth(x, y):
             d = -math.hypot(dx, dy)
         best = max(best, d)
     return best
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 월드 선택 (판정 기준 v2, 10/30). CLIFF_WORLD=2면 아래 값으로 덮어쓴다. 기본(1)은 위의 시청 2층 그대로다.
+# 월드 2는 상수를 고친 뒤 만든 '처음 보는 시험장'이다: 복도 폭 2.0 m(월드 1은 2.4), 가지 복도 2.6 m, 계단 A 2.5 × 2.0 m,
+# 사무실은 가지 복도 동쪽, 계단 B는 사무실 문 북쪽 1 m, 검은 매트는 복도 북쪽 절반, 햇빛은 가지 복도 중간.
+# H8(S2 μ 0.02, S4)에만 쓴다. 사람 무리 위치는 월드 1과 같은 역할(모퉁이 안쪽 · 문 남쪽)로 놓았다.
+WORLD = int(os.environ.get("CLIFF_WORLD", "1"))
+WORLD_FILE, MAP_NAME, MASK_PREFIX = "city_hall.world", "city_hall", ""
+# 매핑 주행 경로 (x, y, 도착 후 바라볼 방향 or None) — map_builder가 쓴다
+MAP_PATH = [
+    (3.0, 4.2, None), (5.0, 4.6, None), (7.3, 4.2, 0.0), (7.4, 6.2, None), (7.8, 8.5, math.pi / 2),
+    (7.6, 8.9, None), (6.0, 8.9, None), (4.6, 8.9, None), (4.5, 7.9, None), (5.8, 7.8, None), (5.4, 9.3, None),
+    (6.2, 8.9, None), (7.5, 8.8, None), (7.6, 6.0, None), (6.0, 4.2, None), (1.6, 4.2, math.pi),
+]
+if WORLD == 2:
+    WORLD_FILE, MAP_NAME, MASK_PREFIX = "world2.world", "world2", "w2_"
+    WALLS = [
+        [(0.5, 4.0), (0.5, 2.0), (11.5, 2.0), (11.5, 4.0), (9.6, 4.0)],          # 복도 남쪽 벽 → 계단 A 수직갱
+        [(9.6, 4.0), (9.6, 8.0)],                                                 # 가지 복도 동쪽 벽 (사무실 문 아래)
+        [(9.6, 9.0), (9.6, 11.6), (7.0, 11.6), (7.0, 4.0), (0.5, 4.0)],          # 문 위 → 계단 B 수직갱 → 가지 서쪽 → 복도 북쪽
+        [(9.6, 7.0), (12.6, 7.0), (12.6, 10.0), (9.6, 10.0)],                     # 사무실
+    ]
+    VOIDS = {
+        "A": (8.8, 2.0, 11.5, 4.0, "+x"),   # 복도 끝 모퉁이. 서쪽(복도)·북쪽(가지 복도 입구 동쪽 0.8 m, 월드 1과 같은 폭)이 열려 있다
+        "B": (7.0, 9.1, 9.6, 11.6, "+y"),   # 가지 복도 끝, 사무실 문(y 8.0–9.0) 바로 북쪽 (월드 1과 같이 문에서 0.1 m)
+    }
+    FLOOR_RECT = (0.3, 1.8, 12.8, 11.8)
+    DARK_MAT = (3.0, 2.8, 4.0, 4.0)
+    if os.environ.get("CLIFF_W2_MAT"):   # H8 탐색(10/31): 고정 뒤 변경. 확인 실험은 이 변수 없이 돌았다
+        DARK_MAT = tuple(float(v) for v in os.environ["CLIFF_W2_MAT"].split(","))
+    SUN_PATCH = (7.0, 5.6, 9.6, 6.6)
+    WET_PATCH = (6.6, 2.0, 8.8, 5.2)
+    START = (1.3, 3.0, 0.0)
+    START_S3J = (2.3, 3.0, 0.0)
+    GOAL = (11.1, 8.5, 0.0)
+    OVERHEAD = dict(x=6.55, y=6.8, z=24.0, hfov=2 * math.atan(6.4 / 24.0), w=720, h=600)
+    GROUPS = {
+        # 월드 1 배치를 벽 기준으로 옮겼다 (10/30 점검: 처음 배치는 P0도 계단에 안 가서 시험이 안 됐다 — H8 비교 데이터를 보기 전 수정)
+        "A": [(7.35, 3.35), (7.85, 3.65), (7.45, 4.2), (8.0, 4.35)],    # 모퉁이 안쪽 → 계단 쪽(동쪽)으로 돌게 된다
+        "B": [(9.2, 7.75), (8.7, 8.05), (8.15, 8.2), (8.95, 7.2)],      # 문 남쪽을 막는다 → 북쪽(계단 B 쪽)으로 돌아 들어와야 한다
+    }
+    PUSH_TRIGGER_X = 5.1
+    STAIRSIDE = (9.3, 4.55, math.pi / 2)
+    YIELD_PEOPLE = [(8.4, 5.6), (8.9, 5.7), (9.3, 5.5)]
+    CLIFF_GRID = {"map": (0.0, 1.0, 140, 120), "odom": (-2.0, -3.0, 150, 130)}
+    MAP_PATH = [
+        (3.0, 3.0, None), (5.0, 3.2, None), (7.9, 3.0, 0.0), (8.3, 5.0, None), (8.3, 8.5, math.pi / 2),
+        (9.2, 8.5, None), (10.5, 8.5, None), (11.8, 7.6, None), (11.8, 9.4, None), (10.4, 9.4, None),
+        (10.2, 8.5, None), (8.3, 8.5, None), (8.2, 6.0, None), (6.0, 3.0, None), (1.6, 3.0, math.pi),
+    ]

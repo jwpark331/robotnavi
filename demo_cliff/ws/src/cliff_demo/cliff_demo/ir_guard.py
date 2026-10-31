@@ -27,6 +27,7 @@ from std_msgs.msg import Float32
 from cliff_demo import geometry as G
 
 NAMES = {"r60": -60, "r20": -20, "l20": 20, "l60": 60}
+REAR = {"r160": -160, "l160": 160}   # P1irb(rear=true)에서만: 뒤 IR이 낭떠러지를 보면 후진(−x)만 막는다 (v2 10/30)
 CMD_TIMEOUT = 0.3
 # 후진 거리: IR(중심 앞 0.24 m)이 기록한 낭떠러지 칸 둘레 0.3 m는 금지이고, Nav2 컨트롤러는 몸 전체(반지름 0.25 m)가 그 밖에 있어야
 # 움직인다 → 중심이 0.3 + 0.25 = 0.55 m 넘게 떨어져야 한다 → 최소 0.55 − 0.24 = 0.31 m, 여유를 둬 0.4 m.
@@ -47,6 +48,9 @@ class IrGuard(Node):
         self.dropout = self.declare_parameter("mat_dropout", G.MAT_DROPOUT).value
         self.log_path = self.declare_parameter("log_path", "").value
         self.plus = self.declare_parameter("plus", False).value
+        self.rear = self.declare_parameter("rear", False).value
+        self.angles = {**NAMES, **(REAR if self.rear else {})}
+        self.cliff_rear = False
         self.cap, self.cap_t, self.n_capped = None, None, 0
         self.rev_until = None
         self.n_reverse = 0
@@ -54,8 +58,8 @@ class IrGuard(Node):
         if self.plus:
             self.create_subscription(Float32, "/cliff_speed_cap", self.on_cap, 10)
         self.rng = np.random.default_rng(self.declare_parameter("seed", 1).value + 101)
-        self.raw = {n: False for n in NAMES}       # 이번 판독이 낭떠러지인가
-        self.prev = {n: False for n in NAMES}
+        self.raw = {n: False for n in self.angles}       # 이번 판독이 낭떠러지인가
+        self.prev = {n: False for n in self.angles}
         self.cliff = False
         self.gt = None
         self.stop_since = None
@@ -67,7 +71,7 @@ class IrGuard(Node):
         self.create_timer(0.05, self.watchdog)
         self.create_subscription(Twist, "/cmd_vel", self.on_cmd, 10)
         self.create_subscription(Odometry, "/ground_truth", self.on_gt, 10)
-        for n in NAMES:
+        for n in self.angles:
             self.create_subscription(Range, f"/ir/{n}", lambda m, n=n: self.on_ir(n, m), qos_profile_sensor_data)
         self.log = open(self.log_path, "a") if self.log_path else None
         self.get_logger().info(f"ir_guard enabled={self.enabled}")
@@ -85,7 +89,7 @@ class IrGuard(Node):
         on_mat = False
         if self.artifacts and self.gt is not None:
             x, y, th = self.gt
-            a = th + math.radians(NAMES[name])
+            a = th + math.radians(self.angles[name])
             wx, wy = x + G.IR_RADIUS * math.cos(a), y + G.IR_RADIUS * math.sin(a)
             on_mat = G.in_rect(wx, wy, G.DARK_MAT)
             if on_mat and self.rng.random() < self.dropout:
@@ -94,7 +98,10 @@ class IrGuard(Node):
         self.prev[name] = bad
         self.raw[name] = cur
         was = self.cliff
-        self.cliff = any(self.raw.values())
+        self.cliff = any(self.raw[n] for n in NAMES)
+        self.cliff_rear = any(self.raw[n] for n in REAR if n in self.raw)
+        if name in REAR:
+            return
         if cur and self.plus and self.enabled:                  # IR이 본 낭떠러지 지점을 기억으로 보낸다
             p = PointStamped()
             p.header.frame_id = "base_footprint"
@@ -144,6 +151,9 @@ class IrGuard(Node):
                 out.linear.x = cap
                 self.n_capped += 1
         if self.enabled and self.cliff and out.linear.x > 0.0:
+            out.linear.x = 0.0
+            self.n_block += 1
+        if self.enabled and self.cliff_rear and out.linear.x < 0.0:
             out.linear.x = 0.0
             self.n_block += 1
         self.pub.publish(out)

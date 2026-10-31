@@ -4,7 +4,8 @@
     python3 tools/find_faults.py results/runs --delete  # 지우기 → ./run_all.sh 다시 돌리면 그 회차만 채운다
 
 결함 기준: outcome이 infra_fault/sim_stalled, 또는 launch.log에 'Transform data too old'가 100줄 넘음(AMCL이 스캔 처리를 멈춤),
-또는 40줄(≈2 s) 넘게 지연된 뒤 도착 못 함(추락 포함 — 진짜 추락은 0–8줄),
+또는 40줄(≈2 s) 넘음 — 도착 여부와 상관없이 (판정 기준 v2, 10/30. 그전에는 '40줄 넘고 도착 못 함'이었다. 사전 실험 1,086회에는
+40줄 넘고 도착한 회차가 없어 결과는 같다),
 또는 result.json이 없음(시간 초과로 끊김).
 """
 import json
@@ -30,9 +31,9 @@ def faults(root):
                 n = sum(1 for ln in open(os.path.join(dirpath, "launch.log"), errors="ignore") if "Transform data too old" in ln)
                 if n > 100:
                     why = f"AMCL TF 멈춤 ({n}줄)"
-                elif n > 40 and r["outcome"] != "arrived":
-                    # 진짜 추락 회차는 TF 경고 0–8줄. 40줄(≈2 s) 넘으면 컨트롤러가 멈춘 TF로 같은 명령을 계속 낸 것
-                    why = f"컨트롤러 TF 지연 {n}줄 뒤 {r['outcome']} (장치 결함 의심)"
+                elif n > 40:
+                    # 진짜 추락 회차는 TF 경고 0–8줄. 40줄(≈2 s) 넘으면 컨트롤러가 멈춘 TF로 같은 명령을 계속 낸 것 — 결과와 무관하게 결함
+                    why = f"컨트롤러 TF 지연 {n}줄 뒤 {r['outcome']} (장치 결함)"
                 elif r["outcome"] == "arrived" and (r.get("goal_err") or 0) > 1.5:
                     why = f"가짜 도착 (실제로는 목표에서 {r['goal_err']} m)"
         if why:

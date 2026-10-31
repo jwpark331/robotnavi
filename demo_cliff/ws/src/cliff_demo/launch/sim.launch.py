@@ -23,7 +23,6 @@ def generate_launch_description():
     robot = xacro.process_file(os.path.join(pkg, "urdf", "servi.urdf.xacro")).toxml()
     gui = LaunchConfiguration("gui")
     ir = LaunchConfiguration("ir")
-    x, y, yaw = G.START
 
     return LaunchDescription([
         DeclareLaunchArgument("gui", default_value="false"),
@@ -34,6 +33,10 @@ def generate_launch_description():
         DeclareLaunchArgument("seed", default_value="1"),
         DeclareLaunchArgument("ir_log", default_value=""),
         DeclareLaunchArgument("ir_plus", default_value="false", description="P3+: 속도 상한 적용 · IR 지점 기억 · 후진"),
+        DeclareLaunchArgument("ir_rear", default_value="false", description="P1irb: 뒤 IR로 후진도 막기"),
+        DeclareLaunchArgument("spawn_x", default_value=str(G.START[0])),
+        DeclareLaunchArgument("spawn_y", default_value=str(G.START[1])),
+        DeclareLaunchArgument("spawn_yaw", default_value=str(G.START[2])),
         IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(gz, "launch", "gzserver.launch.py")),
                                  launch_arguments={"world": LaunchConfiguration("world"), "verbose": "false"}.items()),
         IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(gz, "launch", "gzclient.launch.py")),
@@ -46,8 +49,10 @@ def generate_launch_description():
                           "mat_dropout": ParameterValue(LaunchConfiguration("mat_dropout"), value_type=float),
                           "seed": ParameterValue(LaunchConfiguration("seed"), value_type=int),
                           "log_path": LaunchConfiguration("ir_log"),
-                          "plus": ParameterValue(LaunchConfiguration("ir_plus"), value_type=bool)}]),
+                          "plus": ParameterValue(LaunchConfiguration("ir_plus"), value_type=bool),
+                          "rear": ParameterValue(LaunchConfiguration("ir_rear"), value_type=bool)}]),
         Node(package="gazebo_ros", executable="spawn_entity.py", output="log",
              arguments=["-entity", "servi", "-topic", "robot_description",
-                        "-x", str(x), "-y", str(y), "-z", "0.01", "-Y", str(yaw)]),
+                        "-x", LaunchConfiguration("spawn_x"), "-y", LaunchConfiguration("spawn_y"), "-z", "0.01",
+                        "-Y", LaunchConfiguration("spawn_yaw")]),
     ])

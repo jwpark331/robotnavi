@@ -23,6 +23,8 @@ DROPOUT=${DROPOUT:-0.75}   # 검은 매트 결측률
 VOID=${VOID:-0.0}          # 검은 계단: 계단 구멍 광선 결측률 (본 실험 0)
 MU=${MU:-1.0}              # 젖은 바닥: 계단 A 앞 모퉁이 마찰계수 (본 실험 1.0)
 PITCH=${PITCH:-0.0}        # 가감속 연동 기울기 오차 [deg/(m/s²)] (본 실험 0)
+RING=${RING:-false}        # v2: 모든 방식의 운영자 keepout을 비용 띠 마스크로 (본 실험 false)
+VMAX=${VMAX:-0}            # v3: 최고 속도 [m/s] (0 = nav2.yaml 그대로 0.45)
 NOREPORT=${NOREPORT:-0}
 
 for s in $SCENS; do for c in $CONDS; do for k in $SEEDS; do
@@ -33,9 +35,11 @@ for s in $SCENS; do for c in $CONDS; do for k in $SEEDS; do
   tools/record_env.sh "$d/machine.txt"     # 어느 컴퓨터에서 돌렸나 (GPU가 다른 노트북 결과와 구분)
   echo "▶ $s $c seed=$k"
   timeout 420 ros2 launch cliff_demo demo.launch.py scenario:=$s condition:=$c seed:=$k \
-      out_dir:="$PWD/$d" gui:=$GUI push_dx:=$PUSH mat_dropout:=$DROPOUT void_dropout:=$VOID floor_mu:=$MU pitch_k:=$PITCH > "$d/launch.log" 2>&1
+      out_dir:="$PWD/$d" gui:=$GUI push_dx:=$PUSH mat_dropout:=$DROPOUT void_dropout:=$VOID floor_mu:=$MU pitch_k:=$PITCH keepout_ring:=$RING max_vel:=$VMAX > "$d/launch.log" 2>&1
   tools/kill_sim.sh
-  if ls "$d"/frames/*.jpg >/dev/null 2>&1; then
+  if ls "$d"/frames/*.jpg >/dev/null 2>&1 && ! command -v ffmpeg >/dev/null; then
+    python3 -I tools/encode_frames.py "$d" >/dev/null   # ffmpeg가 없으면 OpenCV로 (10/30, JW-laptop)
+  elif ls "$d"/frames/*.jpg >/dev/null 2>&1; then
     ffmpeg -y -loglevel error -framerate 8 -i "$d/frames/%05d.jpg" -c:v libx264 -pix_fmt yuv420p -crf 30 \
         -vf "scale=720:-2" -movflags +faststart "$d/video.mp4" && rm -rf "$d/frames"
   fi

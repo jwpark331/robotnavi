@@ -66,6 +66,8 @@ class Runner:
         self.void_dropout = n.declare_parameter("void_dropout", G.VOID_DROPOUT).value
         self.floor_mu = n.declare_parameter("floor_mu", G.FLOOR_MU).value
         self.pitch_k = n.declare_parameter("pitch_k", 0.0).value
+        self.keepout_ring = n.declare_parameter("keepout_ring", False).value
+        self.max_vel = n.declare_parameter("max_vel", 0.0).value
         os.makedirs(os.path.join(self.out, "frames"), exist_ok=True)
         self.gt = self.gt_q = None
         self.amcl = None
@@ -246,7 +248,13 @@ class Runner:
         legs = [tuple(goal)] + ([G.GOAL] if sc.get("yield_back") else [])
         back_dist = rg.uniform(*G.YIELD_BACK) if sc.get("yield_back") else None
         leg, phase, wait_until, blockers = 0, "go", None, []
-        nav.setInitialPose(pose_stamped(nav, *G.START))
+        init_err = None
+        if sc.get("init_err"):
+            # S3j: 실제로는 START_S3J에 있는데 운영자가 x로 push_dx만큼 뒤를 초기 위치로 넣는다 (S3 밀림과 같은 방향·크기의 착각)
+            init_err = round(push_dx, 3)
+            nav.setInitialPose(pose_stamped(nav, G.START_S3J[0] - push_dx, G.START_S3J[1], G.START_S3J[2]))
+        else:
+            nav.setInitialPose(pose_stamped(nav, *G.START))
         if not self.wait_ready():
             nav.get_logger().error("Nav2가 준비되지 않음")
         self.wait_fresh_tf()
@@ -443,7 +451,8 @@ class Runner:
                       void_dropout=self.void_dropout, floor_mu=self.floor_mu,
                       walkers=[dict(name=w.name, appear=w.appear_n, yield_n=w.block_n) for w in self.walkers],
                       goals=[[round(v, 3) for v in q] for q in legs], leg_reached=leg + (outcome == "arrived"),
-                      back_dist=round(back_dist, 3) if back_dist else None, pitch_k=self.pitch_k)
+                      back_dist=round(back_dist, 3) if back_dist else None, pitch_k=self.pitch_k,
+                      keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel)
         with open(os.path.join(self.out, "result.json"), "w") as f:
             json.dump(result, f, ensure_ascii=False, indent=1)
         with open(os.path.join(self.out, "track.json"), "w") as f:

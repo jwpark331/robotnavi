@@ -117,7 +117,7 @@ def world(wet_mu=None):
 
 
 if __name__ == "__main__":
-    out = sys.argv[1] if len(sys.argv) > 1 else "city_hall.world"
+    out = sys.argv[1] if len(sys.argv) > 1 else G.WORLD_FILE
     with open(out, "w") as f:
         f.write(world())
     print(out)

@@ -14,12 +14,7 @@ from rclpy.node import Node
 
 from cliff_demo import geometry as G
 
-# (x, y, 도착 후 바라볼 방향 or None)
-PATH = [
-    (3.0, 4.2, None), (5.0, 4.6, None), (7.3, 4.2, 0.0), (7.4, 6.2, None), (7.8, 8.5, math.pi / 2),
-    (7.6, 8.9, None), (6.0, 8.9, None), (4.6, 8.9, None), (4.5, 7.9, None), (5.8, 7.8, None), (5.4, 9.3, None),
-    (6.2, 8.9, None), (7.5, 8.8, None), (7.6, 6.0, None), (6.0, 4.2, None), (1.6, 4.2, math.pi),
-]
+PATH = G.MAP_PATH   # (x, y, 도착 후 바라볼 방향 or None) — 월드마다 geometry에 있다
 
 
 def yaw_of(q):
