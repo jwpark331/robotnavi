@@ -13,6 +13,7 @@ Gazebo 광선은 검은 매트에서도 반사된다. artifacts=true면 참값 �
 """
 import json
 import math
+import os
 import time
 
 import numpy as np
@@ -62,6 +63,7 @@ class IrGuard(Node):
         self.prev = {n: False for n in self.angles}
         self.cliff = False
         self.gt = None
+        self.gt_v = 0.0
         self.stop_since = None
         self.stops = []                             # [시작 sim 시각, 끝, 매트 위였나]
         self.n_block = 0
@@ -74,6 +76,8 @@ class IrGuard(Node):
         for n in self.angles:
             self.create_subscription(Range, f"/ir/{n}", lambda m, n=n: self.on_ir(n, m), qos_profile_sensor_data)
         self.log = open(self.log_path, "a") if self.log_path else None
+        # v4: ir.jsonl은 풀린 정지만 남아서 풀리지 않은 정지(추락 회차 등)를 못 본다 → 시작할 때 따로 남긴다
+        self.start_log = open(os.path.join(os.path.dirname(self.log_path), "ir_start.jsonl"), "a") if self.log_path else None
         self.get_logger().info(f"ir_guard enabled={self.enabled}")
 
     def now(self):
@@ -82,6 +86,7 @@ class IrGuard(Node):
     def on_gt(self, m):
         p = m.pose.pose
         self.gt = (p.position.x, p.position.y, yaw_of(p.orientation))
+        self.gt_v = math.hypot(m.twist.twist.linear.x, m.twist.twist.linear.y)
 
     def on_ir(self, name, m):
         r = m.range
@@ -111,6 +116,7 @@ class IrGuard(Node):
             self.ir_pub.publish(p)
         if self.cliff and not was:
             self.stop_since = (self.now(), on_mat)
+            self.write_start(name, on_mat)
             if self.plus and self.enabled:                      # 물러났다가 (기억된 낭떠러지를 피해) 다시 짠 경로로
                 self.rev_until = self.now() + REVERSE_DIST / REVERSE_SPEED
                 self.n_reverse += 1
@@ -164,6 +170,12 @@ class IrGuard(Node):
                                            n_capped=self.n_capped, n_reverse=self.n_reverse)) + "\n")
             self.log.flush()
 
+    def write_start(self, name, on_mat):
+        if self.start_log:
+            self.start_log.write(json.dumps(dict(t=round(self.now(), 3), sensor=name, on_mat=on_mat, v=round(self.gt_v, 3),
+                                                 gt=[round(v, 3) for v in self.gt] if self.gt else None)) + "\n")
+            self.start_log.flush()
+
 
 def main():
     rclpy.init()
@@ -181,5 +193,7 @@ def main():
     finally:
         if n.log:
             n.log.close()
+        if n.start_log:
+            n.start_log.close()
         n.destroy_node()
         rclpy.try_shutdown()

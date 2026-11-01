@@ -20,7 +20,7 @@ from cliff_demo import geometry as G
 def generate_launch_description():
     pkg = get_package_share_directory("cliff_demo")
     gz = get_package_share_directory("gazebo_ros")
-    robot = xacro.process_file(os.path.join(pkg, "urdf", "servi.urdf.xacro")).toxml()
+    robot = xacro.process_file(os.path.join(pkg, "urdf", "servi.urdf.xacro"), mappings={"ir_r": str(G.IR_RADIUS)}).toxml()
     gui = LaunchConfiguration("gui")
     ir = LaunchConfiguration("ir")
 

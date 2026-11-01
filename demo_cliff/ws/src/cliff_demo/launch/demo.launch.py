@@ -33,8 +33,9 @@ def setup(context):
     bringup = get_package_share_directory("nav2_bringup")
     a = {k: context.launch_configurations[k]
          for k in ("scenario", "condition", "seed", "out_dir", "gui", "timeout", "push_dx", "mat_dropout", "void_dropout", "floor_mu", "pitch_k",
-                   "keepout_ring", "max_vel")}
+                   "keepout_ring", "max_vel", "cam_kill_x")}
     scen, cond = G.SCENARIOS[a["scenario"]], G.CONDITIONS[a["condition"]]
+    start = getattr(G, scen["start"]) if scen.get("start") else G.START   # S9만 시작 위치가 다르다 (v4)
     out = a["out_dir"]
     os.makedirs(out, exist_ok=True)
 
@@ -51,7 +52,7 @@ def setup(context):
     ring = bool(cond.get("keepout_ring")) or a["keepout_ring"].lower() == "true"   # v2는 모든 방식이 띠 keepout
     mask = G.MASK_PREFIX + "keepout_" + "".join(scen["keepout"]) + ("_ring" if ring else "")
     p["filter_mask_server"]["ros__parameters"]["yaml_filename"] = os.path.join(pkg, "maps", mask + ".yaml")
-    p["amcl"]["ros__parameters"]["initial_pose"].update(x=G.START[0], y=G.START[1], yaw=G.START[2])   # 월드 2 (월드 1은 같은 값)
+    p["amcl"]["ros__parameters"]["initial_pose"].update(x=start[0], y=start[1], yaw=start[2])   # 월드 2 (월드 1은 같은 값)
     params = os.path.join(out, "nav2_params.yaml")
     with open(params, "w") as f:
         yaml.dump(p, f, Dumper=NoAlias, allow_unicode=True, sort_keys=False)   # rcl 파서는 YAML 별칭(&id)을 못 읽는다
@@ -72,6 +73,8 @@ def setup(context):
                                                    "ir_rear": "true" if cond.get("ir_rear") else "false",
                                                    **({"spawn_x": str(G.START_S3J[0]), "spawn_y": str(G.START_S3J[1]),
                                                        "spawn_yaw": str(G.START_S3J[2])} if scen.get("init_err") else {}),
+                                                   **({"spawn_x": str(start[0]), "spawn_y": str(start[1]),
+                                                       "spawn_yaw": str(start[2])} if scen.get("start") else {}),
                                                    "mat_dropout": a["mat_dropout"], "seed": a["seed"],
                                                    "ir_log": os.path.join(out, "ir.jsonl") if cond.get("ir") else ""}.items()),
         IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(bringup, "launch", "localization_launch.py")),
@@ -98,6 +101,8 @@ def setup(context):
                                    **({"nan_neutral": True} if cond.get("nan_neutral") else {}),
                                    **({"nan_neutral": True, "view_gate": True, "ground_plane": True, "sigma_phi_deg": 1.0,
                                        "three_state": True, "ir_memory": True} if cond.get("plus") else {}),
+                                   # v4: P3+의 속도 상한도 최고 속도를 따른다 (안 넘기면 VMAX를 줘도 v_nav 기본 0.45에 막힌다)
+                                   **({"v_nav": max_vel} if cond.get("plus") and max_vel > 0 else {}),
                                    "log_path": os.path.join(out, "cliff.jsonl")}])]
         managed += ["cliff_filter_info_server"]
     if managed:
@@ -109,7 +114,8 @@ def setup(context):
                                "seed": int(a["seed"]), "out_dir": out, "timeout": float(a["timeout"]),
                                "push_dx": float(a["push_dx"]), "mat_dropout": float(a["mat_dropout"]),
                                "void_dropout": float(a["void_dropout"]), "floor_mu": float(a["floor_mu"]),
-                               "pitch_k": float(a["pitch_k"]), "keepout_ring": ring, "max_vel": max_vel}])
+                               "pitch_k": float(a["pitch_k"]), "keepout_ring": ring, "max_vel": max_vel,
+                               "cam_kill_x": float(a["cam_kill_x"])}])
     acts += [runner, RegisterEventHandler(OnProcessExit(target_action=runner, on_exit=[EmitEvent(event=Shutdown())]))]
     return acts
 
@@ -129,5 +135,6 @@ def generate_launch_description():
         DeclareLaunchArgument("keepout_ring", default_value="false", description="v2: 모든 방식의 운영자 keepout을 비용 띠 마스크로"),
         DeclareLaunchArgument("void_dropout", default_value=str(G.VOID_DROPOUT), description="검은 계단: 계단 구멍 광선 결측률"),
         DeclareLaunchArgument("max_vel", default_value="0", description="v3: 최고 속도 [m/s] (0 = nav2.yaml 그대로)"),
+        DeclareLaunchArgument("cam_kill_x", default_value="-1", description="v4 D: 참값 x가 이 값 이상이 되면 cliff_detector 종료 (음수 = 끔)"),
         OpaqueFunction(function=setup),
     ])

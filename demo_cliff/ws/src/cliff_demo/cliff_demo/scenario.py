@@ -7,6 +7,7 @@
 import json
 import math
 import os
+import subprocess
 import time
 
 import numpy as np
@@ -30,6 +31,9 @@ PERSON_SDF = """<sdf version="1.6"><model name="{name}"><static>true</static><po
 <link name="l"><collision name="c"><geometry><cylinder><radius>{r}</radius><length>1.7</length></cylinder></geometry></collision>
 <visual name="v"><geometry><cylinder><radius>{r}</radius><length>1.7</length></cylinder></geometry>
 <material><ambient>0.16 0.36 0.78 1</ambient><diffuse>0.16 0.36 0.78 1</diffuse></material></visual></link></model></sdf>"""
+CONTACT_DIST = G.PERSON_R + G.ROBOT_R   # v4 접촉 기록: 중심 거리가 이 값 이하면 접촉
+CLOSE_GAP = 0.05                        # v4 접촉 기록: 틈이 이보다 작으면 스침
+CAMERA_PROC = "cliff_demo/lib/cliff_demo/cliff_detector"
 
 
 def yaw_of(q):
@@ -68,6 +72,9 @@ class Runner:
         self.pitch_k = n.declare_parameter("pitch_k", 0.0).value
         self.keepout_ring = n.declare_parameter("keepout_ring", False).value
         self.max_vel = n.declare_parameter("max_vel", 0.0).value
+        self.cam_kill_x = n.declare_parameter("cam_kill_x", -1.0).value
+        self.min_person, self.contact_n, self.contact_v, self.close_v = 9e9, 0, 0.0, 0.0
+        self.in_contact = self.people_left = False
         os.makedirs(os.path.join(self.out, "frames"), exist_ok=True)
         self.gt = self.gt_q = None
         self.amcl = None
@@ -97,6 +104,33 @@ class Runner:
         p = m.pose.pose
         self.gt = (p.position.x, p.position.y, yaw_of(p.orientation), p.position.z, tilt_of(p.orientation))
         self.gt_q = p.orientation
+        self.note_person(p.position.x, p.position.y, math.hypot(m.twist.twist.linear.x, m.twist.twist.linear.y))
+
+    def note_person(self, x, y, v):
+        """접촉 기록 (v4): 참값 메시지마다 가장 가까운 사람까지의 중심 거리. 기록만 하고 판단에는 쓰지 않는다."""
+        pts = [] if self.people_left else [(a, b) for _, a, b in self.people]
+        pts += [w.pos for w in self.walkers if w.visible]
+        if not pts:
+            self.in_contact = False
+            return
+        d = min(math.hypot(x - a, y - b) for a, b in pts)
+        self.min_person = min(self.min_person, d)
+        if d <= CONTACT_DIST:
+            self.contact_n += not self.in_contact
+            self.contact_v = max(self.contact_v, v)
+        self.in_contact = d <= CONTACT_DIST
+        if d < CONTACT_DIST + CLOSE_GAP:
+            self.close_v = max(self.close_v, v)
+
+    def kill_camera(self):
+        """카메라 고장 주입 (v4 D): cliff_detector 프로세스를 끝낸다. 깊이카메라 자체는 gzserver 안의 플러그인이라 따로 끌 수 없다.
+        SIGKILL = 정리할 틈 없는 고장. launch는 시나리오 노드가 끝날 때만 내려간다. 끝난 것이 확인되면 True."""
+        subprocess.run(["pkill", "-9", "-f", CAMERA_PROC], check=False)
+        for _ in range(10):
+            if subprocess.run(["pgrep", "-f", CAMERA_PROC], stdout=subprocess.DEVNULL, check=False).returncode != 0:
+                return True
+            time.sleep(0.05)
+        return False
 
     def on_tf(self, m):
         for t in m.transforms:
@@ -239,6 +273,7 @@ class Runner:
         push_dx = rng.uniform(*G.PUSH_DX) if self.push_fixed < 0 else self.push_fixed
         # 목적지: 보통은 사무실. S7·S8은 계단 옆 지점(시드마다 ±5 cm), S8은 그다음 비켜 주기 → 사무실 (두 구간)
         sc = G.SCENARIOS[self.scen]
+        self.timeout = sc.get("timeout", self.timeout)       # S9만 짧다 (첫 접근의 정지만 본다)
         g = sc.get("goal")
         goal = list(getattr(G, g) if isinstance(g, str) else (g or G.GOAL))
         rg = np.random.default_rng(self.seed + 2)            # S7·S8에서만 뽑는다 → 다른 시나리오는 이전과 같다
@@ -254,7 +289,7 @@ class Runner:
             init_err = round(push_dx, 3)
             nav.setInitialPose(pose_stamped(nav, G.START_S3J[0] - push_dx, G.START_S3J[1], G.START_S3J[2]))
         else:
-            nav.setInitialPose(pose_stamped(nav, *G.START))
+            nav.setInitialPose(pose_stamped(nav, *(getattr(G, sc["start"]) if sc.get("start") else G.START)))
         if not self.wait_ready():
             nav.get_logger().error("Nav2가 준비되지 않음")
         self.wait_fresh_tf()
@@ -263,6 +298,7 @@ class Runner:
         resent, retried, t_sent = 0, 0, 0.0
         log, events = [], []
         outcome, fell_at, pushed = None, None, False
+        cam_killed = False
         next_log = next_frame = 0.0
         fi = 0
         frame_t = []
@@ -334,6 +370,9 @@ class Runner:
                     self.push(push_dx)
                     pushed = True
                     events.append(dict(t=round(t, 2), kind="push", dx=round(push_dx, 3)))
+                if self.cam_kill_x >= 0 and not cam_killed and fell_at is None and x >= self.cam_kill_x:
+                    cam_killed = True
+                    events.append(dict(t=round(t, 2), kind="camera_kill", x=round(x, 3), y=round(y, 3), dead=self.kill_camera()))
                 if t >= next_log:
                     next_log = t + 0.1
                     a = self.amcl
@@ -362,7 +401,7 @@ class Runner:
                     req = DeleteEntity.Request()
                     req.name = name
                     self.call(self.delete, req)
-                left = True
+                left = self.people_left = True
                 events.append(dict(t=round(t, 2), kind="leave"))
             if fell_at is not None and (t > fell_at + 4.0 or time.monotonic() - w_fell > 12.0):
                 break
@@ -452,7 +491,10 @@ class Runner:
                       walkers=[dict(name=w.name, appear=w.appear_n, yield_n=w.block_n) for w in self.walkers],
                       goals=[[round(v, 3) for v in q] for q in legs], leg_reached=leg + (outcome == "arrived"),
                       back_dist=round(back_dist, 3) if back_dist else None, pitch_k=self.pitch_k,
-                      keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel)
+                      keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel,
+                      ir_r=G.IR_RADIUS, cam_kill_x=self.cam_kill_x,
+                      min_person=round(self.min_person, 3) if self.min_person < 9e9 else None, contact_n=self.contact_n,
+                      contact_v=round(self.contact_v, 3), close_v=round(self.close_v, 3))
         with open(os.path.join(self.out, "result.json"), "w") as f:
             json.dump(result, f, ensure_ascii=False, indent=1)
         with open(os.path.join(self.out, "track.json"), "w") as f:

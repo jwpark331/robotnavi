@@ -98,11 +98,14 @@
   </gazebo>
 
   <!-- 하향 IR 낭떠러지 센서 4개 (룸바식): 몸체 앞쪽 가장자리, 바닥 위 2.5 cm에서 수직 아래. P1i 조건에서만 ir_guard가 쓴다. -->
-  <xacro:macro name="ir" params="name a">
+  <!-- ir_r: 앞 IR 4개의 중심 거리 (v4 B: sim.launch.py가 geometry.IR_RADIUS를 넘긴다). 뒤 IR 2개는 0.24 그대로. -->
+  <xacro:arg name="ir_r" default="0.24"/>
+  <xacro:property name="ir_r" value="$(arg ir_r)"/>
+  <xacro:macro name="ir" params="name a r:=${ir_r}">
     <link name="ir_${name}"/>
     <joint name="ir_${name}_joint" type="fixed">
       <parent link="base_link"/><child link="ir_${name}"/>
-      <origin xyz="${0.24*cos(radians(a))} ${0.24*sin(radians(a))} -0.035" rpy="0 ${pi/2} 0"/>
+      <origin xyz="${r*cos(radians(a))} ${r*sin(radians(a))} -0.035" rpy="0 ${pi/2} 0"/>
     </joint>
     <gazebo reference="ir_${name}">
       <sensor name="ir_${name}" type="ray">
@@ -125,8 +128,8 @@
   <xacro:ir name="l20" a="20"/>
   <xacro:ir name="l60" a="60"/>
   <!-- 뒤 IR 2개 (v2 10/30): P1irb에서만 ir_guard가 후진을 막는 데 쓴다. 다른 조건에서는 발행만 되고 쓰이지 않는다 -->
-  <xacro:ir name="r160" a="-160"/>
-  <xacro:ir name="l160" a="160"/>
+  <xacro:ir name="r160" a="-160" r="0.24"/>
+  <xacro:ir name="l160" a="160" r="0.24"/>
 
   <gazebo>
     <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">

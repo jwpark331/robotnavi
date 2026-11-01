@@ -81,7 +81,7 @@ ROBOT_R = 0.25
 # 하향 IR 낭떠러지 센서 (룸바식): 몸체 앞쪽 가장자리 4곳, 바닥 위 2.5 cm에서 수직 아래를 본다.
 IR_ANGLES = (-60, -20, 20, 60)     # 진행 방향 기준 [deg]
 IR_REAR_ANGLES = (-160, 160)       # 뒤 IR (P1irb만 쓴다, v2 10/30)
-IR_RADIUS = 0.24                   # 중심에서 [m]
+IR_RADIUS = float(os.environ.get("CLIFF_IR_R", "0.24"))   # 중심에서 [m]. v4 B: 앞 IR 4개만 옮겨 본다 (sim.launch.py가 xacro에 넘긴다)
 IR_CLIFF = 0.07                    # 이보다 멀면(또는 반사 없음) 낭떠러지
 KEEPOUT_MARGIN = 0.30   # 운영자가 그리는 keepout = 계단 구멍 + 30 cm (Nav2 필터는 인플레이션을 안 받으므로)
 
@@ -100,7 +100,14 @@ SCENARIOS = {
     "S7": dict(label="계단 옆 목적지 (A 누락)", groups=[], push=False, keepout=("B",), goal="STAIRSIDE", goal_jitter=0.05),
     "S8": dict(label="계단 옆에서 뒤로 비켜 주기 (A 누락)", groups=[], push=False, keepout=("B",), goal="STAIRSIDE",
                goal_jitter=0.05, yield_back=True),
+    # 직진 접근 (v4, 11/01): 계단 A 서쪽 가장자리에 수직으로 닿는다. 첫 접근의 정지 여유 · 제동 거리를 속도별로 잰다
+    "S9": dict(label="직진 접근 (A 누락)", groups=[], push=False, keepout=("B",), goal="GOAL_S9", start="START_S9", timeout=30.0),
 }
+# S9: 목표는 구멍 안 1.3 m라 도달할 수 없다 (LiDAR 지도에는 빈 바닥이라 경로는 나온다). 시작 x = 4.7은 검은 매트(x ≤ 4.6)를 피하고,
+# 0.8 m/s까지 가속(약 0.32 m)한 뒤에 계단이 카메라 시야(약 3 m)에 들어오는 자리다. 목표가 x ≈ 9.2보다 가까우면 DWB가 궤적 끝(sim_time 1.5 s)이
+# 목표를 넘지 않게 속도를 줄여, IR이 닿는 x ≈ 8.0에서 0.8 m/s가 안 된다 (11/01 스모크: 목표 x = 8.7이면 가장자리에서 약 0.35 m/s). 월드 1 좌표.
+START_S9 = (4.7, 4.2, 0.0)
+GOAL_S9 = (9.5, 4.2, 0.0)
 # S7·S8의 '계단 옆 배달 지점': 계단 A 북쪽 가장자리(y 5.4) 너머, 가장자리에서 0.55 m. 북쪽을 보고 서서 계단을 등진다.
 # 가는 길에 모퉁이를 돌며 계단이 시야 밖으로 나가고(S7), 도착 뒤엔 계단이 등 뒤에 있다(S8).
 STAIRSIDE = (8.6, 5.95, math.pi / 2)
