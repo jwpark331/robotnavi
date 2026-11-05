@@ -45,6 +45,11 @@ def setup(context):
         fp = p["controller_server"]["ros__parameters"]["FollowPath"]
         fp["max_vel_x"] = fp["max_speed_xy"] = max_vel
         p["velocity_smoother"]["ros__parameters"]["max_velocity"][0] = max_vel
+    if G.WHEEL_ACC < 3.0:                               # v5 B 제동 민감도: 바퀴가 낼 수 없는 가감속을 Nav2가 계획하지 않게 같은 값으로 낮춘다
+        fp = p["controller_server"]["ros__parameters"]["FollowPath"]
+        sm = p["velocity_smoother"]["ros__parameters"]
+        fp["acc_lim_x"] = sm["max_accel"][0] = min(fp["acc_lim_x"], G.WHEEL_ACC)
+        fp["decel_lim_x"] = sm["max_decel"][0] = max(fp["decel_lim_x"], -G.WHEEL_ACC)
     filters = (["keepout_filter"] if cond["keepout"] else []) + (["cliff_filter"] if cond["cliff"] else [])
     for cm in ("local_costmap", "global_costmap"):
         if filters:                       # rcl 파라미터 파서는 빈 리스트를 못 읽는다
@@ -96,7 +101,7 @@ def setup(context):
                       parameters=[{"use_sim_time": True, "mode": cond["cliff"], "frame": cond["frame"], "artifacts": True,
                                    "seed": int(a["seed"]), "mat_dropout": float(a["mat_dropout"]),
                                    "void_dropout": float(a["void_dropout"]), "caution_cost": int(cond.get("caution", 0)),
-                                   "pitch_k_deg": float(a["pitch_k"]),
+                                   "pitch_k_deg": float(a["pitch_k"]), "sense_delay": G.SENSE_DELAY,
                                    **({"memory": cond["memory"]} if "memory" in cond else {}),
                                    **({"nan_neutral": True} if cond.get("nan_neutral") else {}),
                                    **({"nan_neutral": True, "view_gate": True, "ground_plane": True, "sigma_phi_deg": 1.0,

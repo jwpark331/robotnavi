@@ -100,6 +100,8 @@
   <!-- 하향 IR 낭떠러지 센서 4개 (룸바식): 몸체 앞쪽 가장자리, 바닥 위 2.5 cm에서 수직 아래. P1i 조건에서만 ir_guard가 쓴다. -->
   <!-- ir_r: 앞 IR 4개의 중심 거리 (v4 B: sim.launch.py가 geometry.IR_RADIUS를 넘긴다). 뒤 IR 2개는 0.24 그대로. -->
   <xacro:arg name="ir_r" default="0.24"/>
+  <!-- wheel_acc: 바퀴 가감속 한계 [m/s²] (v5 B 제동 민감도: sim.launch.py가 geometry.WHEEL_ACC를 넘긴다. 기본 3.0) -->
+  <xacro:arg name="wheel_acc" default="3.0"/>
   <xacro:property name="ir_r" value="$(arg ir_r)"/>
   <xacro:macro name="ir" params="name a r:=${ir_r}">
     <link name="ir_${name}"/>
@@ -136,7 +138,7 @@
       <update_rate>50</update_rate>
       <left_joint>left_wheel_joint</left_joint><right_joint>right_wheel_joint</right_joint>
       <wheel_separation>${ws}</wheel_separation><wheel_diameter>${2*wr}</wheel_diameter>
-      <max_wheel_torque>20</max_wheel_torque><max_wheel_acceleration>3.0</max_wheel_acceleration>
+      <max_wheel_torque>20</max_wheel_torque><max_wheel_acceleration>$(arg wheel_acc)</max_wheel_acceleration>
       <publish_odom>true</publish_odom><publish_odom_tf>true</publish_odom_tf><publish_wheel_tf>false</publish_wheel_tf>
       <odometry_frame>odom</odometry_frame><robot_base_frame>base_footprint</robot_base_frame>
       <odometry_source>0</odometry_source>  <!-- 0 = 바퀴 인코더 (밀려서 생긴 이동은 모른다) -->

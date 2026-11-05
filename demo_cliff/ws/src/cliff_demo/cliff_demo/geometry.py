@@ -74,6 +74,7 @@ PERSON_R = 0.2
 
 # 위치 착각(S3): 로봇이 이 x를 지나면 바퀴가 모르는 이동을 넣는다 (사람이 밀거나 바퀴가 미끄러짐).
 PUSH_TRIGGER_X = 5.8
+PUSH_Y = 4.2            # 복도 중심선 y — 이 ±0.9 m 안에서만 민다 (v5, 11/05: 월드 2에서 밀림이 안 일어나던 4.2 고정값을 월드별로)
 PUSH_DX = (0.8, 1.0)
 
 ROBOT_R = 0.25
@@ -82,6 +83,11 @@ ROBOT_R = 0.25
 IR_ANGLES = (-60, -20, 20, 60)     # 진행 방향 기준 [deg]
 IR_REAR_ANGLES = (-160, 160)       # 뒤 IR (P1irb만 쓴다, v2 10/30)
 IR_RADIUS = float(os.environ.get("CLIFF_IR_R", "0.24"))   # 중심에서 [m]. v4 B: 앞 IR 4개만 옮겨 본다 (sim.launch.py가 xacro에 넘긴다)
+# v5 B (11/05): 제동 · 지연 민감도. 기본값이면 v4까지와 같다.
+# WHEEL_ACC: 바퀴 플러그인의 가감속 한계 [m/s²] (xacro max_wheel_acceleration). 3.0보다 낮추면 Nav2 가감속 한계도 그 값으로 맞춘다 (demo.launch.py).
+# SENSE_DELAY: 인지 지연 [s]. ir_guard의 IR 판정 반영과 cliff_detector의 깊이 영상 처리를 같은 시간만큼 늦춘다.
+WHEEL_ACC = float(os.environ.get("CLIFF_WHEEL_ACC", "3.0"))
+SENSE_DELAY = float(os.environ.get("CLIFF_SENSE_DELAY", "0"))
 IR_CLIFF = 0.07                    # 이보다 멀면(또는 반사 없음) 낭떠러지
 KEEPOUT_MARGIN = 0.30   # 운영자가 그리는 keepout = 계단 구멍 + 30 cm (Nav2 필터는 인플레이션을 안 받으므로)
 
@@ -208,6 +214,11 @@ if WORLD == 2:
         "B": [(9.2, 7.75), (8.7, 8.05), (8.15, 8.2), (8.95, 7.2)],      # 문 남쪽을 막는다 → 북쪽(계단 B 쪽)으로 돌아 들어와야 한다
     }
     PUSH_TRIGGER_X = 5.1
+    PUSH_Y = 3.0                          # 복도 y 2.0–4.0의 중심선 (v5, 11/05)
+    # v5 B (11/05): S9w2 — 복도 끝 계단 A 서쪽 가장자리(x 8.8)로 곧게 간다. 목표는 구멍 안 1.3 m (월드 1 S9와 같은 거리).
+    # 시작 x 4.7은 매트(v3 H12 자리 x 3.0–4.0) 밖이다.
+    START_S9 = (4.7, 3.0, 0.0)
+    GOAL_S9 = (10.1, 3.0, 0.0)
     STAIRSIDE = (9.3, 4.55, math.pi / 2)
     YIELD_PEOPLE = [(8.4, 5.6), (8.9, 5.7), (9.3, 5.5)]
     CLIFF_GRID = {"map": (0.0, 1.0, 140, 120), "odom": (-2.0, -3.0, 150, 130)}

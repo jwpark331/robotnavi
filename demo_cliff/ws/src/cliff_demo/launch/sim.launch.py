@@ -20,7 +20,7 @@ from cliff_demo import geometry as G
 def generate_launch_description():
     pkg = get_package_share_directory("cliff_demo")
     gz = get_package_share_directory("gazebo_ros")
-    robot = xacro.process_file(os.path.join(pkg, "urdf", "servi.urdf.xacro"), mappings={"ir_r": str(G.IR_RADIUS)}).toxml()
+    robot = xacro.process_file(os.path.join(pkg, "urdf", "servi.urdf.xacro"), mappings={"ir_r": str(G.IR_RADIUS), "wheel_acc": str(G.WHEEL_ACC)}).toxml()
     gui = LaunchConfiguration("gui")
     ir = LaunchConfiguration("ir")
 
@@ -50,7 +50,8 @@ def generate_launch_description():
                           "seed": ParameterValue(LaunchConfiguration("seed"), value_type=int),
                           "log_path": LaunchConfiguration("ir_log"),
                           "plus": ParameterValue(LaunchConfiguration("ir_plus"), value_type=bool),
-                          "rear": ParameterValue(LaunchConfiguration("ir_rear"), value_type=bool)}]),
+                          "rear": ParameterValue(LaunchConfiguration("ir_rear"), value_type=bool),
+                          "sense_delay": G.SENSE_DELAY}]),
         Node(package="gazebo_ros", executable="spawn_entity.py", output="log",
              arguments=["-entity", "servi", "-topic", "robot_description",
                         "-x", LaunchConfiguration("spawn_x"), "-y", LaunchConfiguration("spawn_y"), "-z", "0.01",

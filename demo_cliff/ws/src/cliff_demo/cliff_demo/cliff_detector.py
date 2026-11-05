@@ -16,10 +16,12 @@ mode=frame (비교): 이번 프레임만 본다. drop이나 nan 셀이 이웃에
 Gazebo는 검은 바닥의 적외선 흡수나 햇빛 간섭을 렌더링하지 못한다. artifacts=true면 참값 위치를 써서
 DARK_MAT 구역 픽셀은 MAT_DROPOUT(기본 75 %) 결측, SUN_PATCH 구역 픽셀은 SUN_OUTLIER(15 %) 이상치로 바꾼다 (센서 결함 주입 — 판단에는 참값을 안 쓴다).
 void_dropout > 0이면 계단 구멍 안으로 들어간 광선도 그 확률로 결측이 된다 ('검은 계단' 실험: 어두운 계단·깊은 낭떠러지).
+sense_delay > 0이면 깊이 영상을 받은 뒤 그만큼 늦게 처리한다 (v5 B 인지 지연, 11/05). 처리 때의 로봇 자세는 영상 시각의 TF를 쓴다.
 """
 import json
 import math
 import time
+from collections import deque
 
 import numpy as np
 import rclpy
@@ -151,6 +153,10 @@ class CliffDetector(Node):
         self.pub = self.create_publisher(OccupancyGrid, "/cliff_filter_mask", qos)
         self.create_subscription(CameraInfo, "/depth_cam/depth_cam/depth/camera_info", self.on_info, 1)
         self.create_subscription(Image, "/depth_cam/depth_cam/depth/image_raw", self.on_depth, 2)
+        self.delay = float(self.declare_parameter("sense_delay", G.SENSE_DELAY).value)
+        self.pending = deque()                    # (받은 sim 시각, 영상) — sense_delay > 0일 때만 쓴다
+        if self.delay > 0:
+            self.create_timer(0.01, self.flush_pending)
         self.create_subscription(Odometry, "/ground_truth", self.on_gt, 10)
         if self.pitch_k:
             self.create_subscription(Odometry, "/odom", self.on_odom, 10)
@@ -235,6 +241,17 @@ class CliffDetector(Node):
 
     # ---------- 한 프레임 ----------
     def on_depth(self, msg):
+        if self.delay <= 0:
+            self.process_depth(msg)
+        else:
+            self.pending.append((self.get_clock().now().nanoseconds * 1e-9, msg))
+
+    def flush_pending(self):
+        now = self.get_clock().now().nanoseconds * 1e-9
+        while self.pending and now - self.pending[0][0] >= self.delay:
+            self.process_depth(self.pending.popleft()[1])
+
+    def process_depth(self, msg):
         if self.mode == "off" or self.K is None or not self.static_cam():
             return
         try:

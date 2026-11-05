@@ -5,6 +5,7 @@
 위치추정이 잠깐 멈춰 Nav2가 명령을 못 내면 로봇이 눈을 감고 직진한다. 실제 모터 제어기에는 이 감시가 기본으로 있다.
 enabled=true면 앞쪽 IR 4개 중 하나라도 바닥이 IR_CLIFF보다 멀거나 반사가 없으면 전진(+x)만 막는다. 회전·후진은 허용.
 2회 연속(50–100 ms) 같은 판정일 때만 상태를 바꾼다 (실제 센서의 디바운스).
+sense_delay > 0 (v5 B, 11/05): IR 판정이 명령 차단에 반영되는 것을 그만큼 늦춘다 (센서 · 마이컴 · 통신 지연). 기록(ir_start.jsonl)은 센서가 본 순간이다.
 plus=true (P3+, 피드백 1 대응): ① cliff_detector가 보낸 속도 상한(/cliff_speed_cap)으로 전진 속도를 자른다
   ② IR이 낭떠러지를 보면 그 지점을 /ir_cliff로 알려 기억에 CLIFF로 남기고 ③ REVERSE_DIST(0.4 m)만큼 뒤로 물러난 뒤 Nav2에 맡긴다.
 
@@ -15,6 +16,7 @@ import json
 import math
 import os
 import time
+from collections import deque
 
 import numpy as np
 import rclpy
@@ -51,6 +53,8 @@ class IrGuard(Node):
         self.plus = self.declare_parameter("plus", False).value
         self.rear = self.declare_parameter("rear", False).value
         self.angles = {**NAMES, **(REAR if self.rear else {})}
+        self.delay = float(self.declare_parameter("sense_delay", G.SENSE_DELAY).value)
+        self.hist = deque([(-1e9, False, False)])          # (sim 시각, 앞 낭떠러지, 뒤 낭떠러지) — 판정이 바뀐 순간만
         self.cliff_rear = False
         self.cap, self.cap_t, self.n_capped = None, None, 0
         self.rev_until = None
@@ -105,6 +109,8 @@ class IrGuard(Node):
         was = self.cliff
         self.cliff = any(self.raw[n] for n in NAMES)
         self.cliff_rear = any(self.raw[n] for n in REAR if n in self.raw)
+        if self.delay > 0 and (self.cliff, self.cliff_rear) != self.hist[-1][1:]:
+            self.hist.append((self.now(), self.cliff, self.cliff_rear))
         if name in REAR:
             return
         if cur and self.plus and self.enabled:                  # IR이 본 낭떠러지 지점을 기억으로 보낸다
@@ -124,6 +130,15 @@ class IrGuard(Node):
             self.stops.append([round(self.stop_since[0], 2), round(self.now(), 2), self.stop_since[1]])
             self.stop_since = None
             self.write_log()
+
+    def blocked(self):
+        """명령 차단에 쓰는 (앞, 뒤) 판정. 지연이 없으면 지금 판정, 있으면 delay초 전에 유효했던 판정."""
+        if self.delay <= 0:
+            return self.cliff, self.cliff_rear
+        cut = self.now() - self.delay
+        while len(self.hist) > 1 and self.hist[1][0] <= cut:
+            self.hist.popleft()
+        return self.hist[0][1], self.hist[0][2]
 
     def on_cap(self, m):
         self.cap, self.cap_t = m.data, self.now()
@@ -156,10 +171,11 @@ class IrGuard(Node):
             if out.linear.x > cap:
                 out.linear.x = cap
                 self.n_capped += 1
-        if self.enabled and self.cliff and out.linear.x > 0.0:
+        front, rear = self.blocked()
+        if self.enabled and front and out.linear.x > 0.0:
             out.linear.x = 0.0
             self.n_block += 1
-        if self.enabled and self.cliff_rear and out.linear.x < 0.0:
+        if self.enabled and rear and out.linear.x < 0.0:
             out.linear.x = 0.0
             self.n_block += 1
         self.pub.publish(out)

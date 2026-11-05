@@ -108,6 +108,16 @@ cd ~/robotnavi/demo_cliff && ./run_calibration.sh
 - 일부만: `ONLY_GROUPS="A B24 B30" ./run_v4.sh`. 계획(묶음 · 방식 · 시드 301–320, F만 301–305)은 `tools/v4_plan.py` 한 곳에 있다. 분석은 `python3 tools/analyze_v4.py [결과 폴더]`이고 `run_v4.sh`가 끝에 돌린다.
 - 새로 넣은 것: IR 위치 인자(`CLIFF_IR_R`), 카메라 처리 종료 주입(`CAMKILL`), 사람 거리 · 접촉 기록(`min_person`), 정면 접근 시나리오 S9, IR 정지 시작 기록(`ir_start.jsonl`). 비교군에 P3p를 넣었다.
 
+## 판정 기준 v5 확인 실험 (11/05 구현 · 사전 시험, 고정 전)
+
+- 기준: `보이지 않는 계단 — 판정 기준 v5 초안 (2026-11-05).md`. v4를 "마지막 확인 실험"이라 했던 약속을 바꾸는 실험이다.
+  - 월드 2에서 상수를 고치지 않고 위치 오차(H2a) · 후진(H4 · H11)을 다시 시험한다 (과적합 확인).
+  - 0.45 m/s 정면 접근에서 IR 구성과 비교한다 (제동 · 지연 격자 포함).
+- **아직 고정 전이다.** 순서: 박정원 확인 → `demo_cliff/tools/freeze_v5.sh` → 커밋 · 푸시 → `cd demo_cliff && ./run_v5.sh` (400회, 약 7시간). 고정 해시가 없으면 `run_v5.sh`는 돌지 않는다.
+- 사전 시험: `./run_v5_pilot.sh` → `results_JW-laptop/v5_pilot/check.md` (11/05 모두 통과). 스모크 시험은 `results_JW-laptop/v5_smoke/`에 있다.
+- 새로 넣은 것: 월드 2의 S3 밀림 조건(`PUSH_Y`), 월드 2의 S9 좌표, 바퀴 가감속 인자(`CLIFF_WHEEL_ACC`), 인지 지연 인자(`CLIFF_SENSE_DELAY`), 제동 시험(`tools/brake_test.py`), 카메라 0프레임 결함 규칙. 기본값이면 v4와 같게 동작한다.
+- **화면 변수(DISPLAY)가 있는 셸에서 돌린다.** 없으면 Gazebo 깊이카메라가 뜨지 않는다. 두 실행 스크립트가 미리 막는다.
+
 ## 다른 컴퓨터에서 낸 결과 다루기
 
 **새 컴퓨터 결과는 원래 결과 폴더에 섞지 않는다.** GPU·CPU가 다르면 렌더링과 통신 타이밍이 달라져, 같은 시드라도 회차별 결과가 조금씩 달라진다. 비교는 같은 컴퓨터 결과끼리만 한다.

@@ -366,7 +366,7 @@ class Runner:
                     events.append(dict(t=round(t, 2), kind="fall", x=round(x, 3), y=round(y, 3)))
                     nav.cancelTask()
                 if (G.SCENARIOS[self.scen]["push"] and not pushed and fell_at is None
-                        and x >= G.PUSH_TRIGGER_X and abs(y - 4.2) < 0.9 and t > 2.0):
+                        and x >= G.PUSH_TRIGGER_X and abs(y - G.PUSH_Y) < 0.9 and t > 2.0):
                     self.push(push_dx)
                     pushed = True
                     events.append(dict(t=round(t, 2), kind="push", dx=round(push_dx, 3)))
@@ -493,6 +493,7 @@ class Runner:
                       back_dist=round(back_dist, 3) if back_dist else None, pitch_k=self.pitch_k,
                       keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel,
                       ir_r=G.IR_RADIUS, cam_kill_x=self.cam_kill_x,
+                      world=G.WORLD, wheel_acc=G.WHEEL_ACC, sense_delay=G.SENSE_DELAY,
                       min_person=round(self.min_person, 3) if self.min_person < 9e9 else None, contact_n=self.contact_n,
                       contact_v=round(self.contact_v, 3), close_v=round(self.close_v, 3))
         with open(os.path.join(self.out, "result.json"), "w") as f:
