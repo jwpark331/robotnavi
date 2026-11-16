@@ -50,10 +50,25 @@ def setup(context):
         sm = p["velocity_smoother"]["ros__parameters"]
         fp["acc_lim_x"] = sm["max_accel"][0] = min(fp["acc_lim_x"], G.WHEEL_ACC)
         fp["decel_lim_x"] = sm["max_decel"][0] = max(fp["decel_lim_x"], -G.WHEEL_ACC)
-    filters = (["keepout_filter"] if cond["keepout"] else []) + (["cliff_filter"] if cond["cliff"] else [])
+    cliff_mask = cond["cliff"] not in (None, "points")      # v6 ⑤(points)는 cliff_detector가 마스크 대신 점군만 낸다
+    filters = (["keepout_filter"] if cond["keepout"] else []) + (["cliff_filter"] if cliff_mask else [])
     for cm in ("local_costmap", "global_costmap"):
         if filters:                       # rcl 파라미터 파서는 빈 리스트를 못 읽는다
             p[cm][cm]["ros__parameters"]["filters"] = list(filters)
+        if cond.get("nav2_voxel"):
+            # v6 ⑤ (11/16, 판정 기준 v6 2-2): Nav2 VoxelLayer 하나를 두 비용지도에 더한다. 바꾸는 값은 높이 범위뿐이고 나머지는 Nav2 기본값.
+            # 관측 높이 −3.0 ~ −0.08 m: 우리 감지기의 '바닥 없음' 기준(바닥보다 8 cm 넘게 아래)과 같다.
+            # 격자 −3.0 ~ +1.0 m (0.25 m × 16칸): 구멍 안의 점과 카메라(높이 0.66 m)를 함께 덮어야 광선 지우기가 동작한다.
+            r = p[cm][cm]["ros__parameters"]
+            r["plugins"] = [x for x in r["plugins"] if x != "inflation_layer"] + ["drop_layer", "inflation_layer"]
+            r["drop_layer"] = {
+                "plugin": "nav2_costmap_2d::VoxelLayer", "enabled": True,
+                "origin_z": -3.0, "z_resolution": 0.25, "z_voxels": 16,
+                "observation_sources": "depth",
+                "depth": {"topic": "/cliff_points", "data_type": "PointCloud2",
+                          "min_obstacle_height": -3.0, "max_obstacle_height": -0.08,
+                          "marking": True, "clearing": True},
+            }
     ring = bool(cond.get("keepout_ring")) or a["keepout_ring"].lower() == "true"   # v2는 모든 방식이 띠 keepout
     mask = G.MASK_PREFIX + "keepout_" + "".join(scen["keepout"]) + ("_ring" if ring else "")
     p["filter_mask_server"]["ros__parameters"]["yaml_filename"] = os.path.join(pkg, "maps", mask + ".yaml")
@@ -94,10 +109,16 @@ def setup(context):
                  Node(package="nav2_map_server", executable="costmap_filter_info_server",
                       name="costmap_filter_info_server", output="log", parameters=[params])]
         managed += ["filter_mask_server", "costmap_filter_info_server"]
-    if cond["cliff"]:
+    if cliff_mask:
         acts += [Node(package="nav2_map_server", executable="costmap_filter_info_server",
-                      name="cliff_filter_info_server", output="log", parameters=[params]),
-                 Node(package="cliff_demo", executable="cliff_detector", output="log",
+                      name="cliff_filter_info_server", output="log", parameters=[params])]
+        managed += ["cliff_filter_info_server"]
+    if cond.get("yield_mode") == "memory":
+        # v6 ① (11/16): 후진 요청을 받아 기억 마스크 · 바퀴 odom만으로 갈 수 있는 거리를 정하고 물러난다. 참값을 구독하지 않는다.
+        acts.append(Node(package="cliff_demo", executable="safe_backup", output="log",
+                         parameters=[{"use_sim_time": True, "log_path": os.path.join(out, "safe_backup.jsonl")}]))
+    if cond["cliff"]:
+        acts += [Node(package="cliff_demo", executable="cliff_detector", output="log",
                       parameters=[{"use_sim_time": True, "mode": cond["cliff"], "frame": cond["frame"], "artifacts": True,
                                    "seed": int(a["seed"]), "mat_dropout": float(a["mat_dropout"]),
                                    "void_dropout": float(a["void_dropout"]), "caution_cost": int(cond.get("caution", 0)),
@@ -109,7 +130,6 @@ def setup(context):
                                    # v4: P3+의 속도 상한도 최고 속도를 따른다 (안 넘기면 VMAX를 줘도 v_nav 기본 0.45에 막힌다)
                                    **({"v_nav": max_vel} if cond.get("plus") and max_vel > 0 else {}),
                                    "log_path": os.path.join(out, "cliff.jsonl")}])]
-        managed += ["cliff_filter_info_server"]
     if managed:
         acts.append(Node(package="nav2_lifecycle_manager", executable="lifecycle_manager",
                          name="lifecycle_manager_filters", output="log",

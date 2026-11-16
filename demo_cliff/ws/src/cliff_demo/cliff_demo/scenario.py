@@ -16,11 +16,12 @@ from gazebo_msgs.msg import EntityState
 from gazebo_msgs.srv import DeleteEntity, SetEntityState, SpawnEntity
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import OccupancyGrid, Odometry
 from PIL import Image as PImage
 from rclpy.time import Time
 from rcl_interfaces.msg import Log
 from sensor_msgs.msg import Image
+from std_msgs.msg import Float32, String
 from tf2_msgs.msg import TFMessage
 from tf2_ros import Buffer, TransformListener
 
@@ -99,6 +100,41 @@ class Runner:
         n.create_subscription(TFMessage, "/tf", self.on_tf, 100)
         self.tf = Buffer()
         self.tfl = TransformListener(self.tf, n)
+        # v6 ① (11/16): 기억 기반 후진 로봇은 Nav2 후진 대신 safe_backup 노드에 요청한다. 이 노드(참값을 아는 쪽)는 요청 거리만 보낸다.
+        self.ymode = G.CONDITIONS[self.cond].get("yield_mode")
+        self.y_plan = self.y_end = None
+        if self.ymode == "memory":
+            self.y_req = n.create_publisher(Float32, "/yield_request", 10)
+            n.create_subscription(String, "/yield_status", self.on_ystat, 10)
+        # v6 ⑤ (11/16) 성립 조건 기록: Nav2 VoxelLayer가 계단 구멍 안쪽(가장자리에서 0.3 m 넘게 들어간 곳)을 장애물(100)로 찍었나.
+        # 참값 계단 좌표는 이 평가 노드만 안다. 구멍 안쪽은 LiDAR(벽)나 인플레이션(99 이하)이 100을 만들 수 없는 자리다.
+        self.drop_max, self.drop_t, self.drop_n = 0, None, 0
+        if G.CONDITIONS[self.cond].get("nav2_voxel"):
+            n.create_subscription(OccupancyGrid, "/global_costmap/costmap", self.on_gcost, 1)
+
+    def on_gcost(self, m):
+        g = np.array(m.data, dtype=np.int16).reshape(m.info.height, m.info.width)
+        iy, ix = np.nonzero(g == 100)
+        if len(ix) == 0:
+            self.drop_n += 1
+            return
+        res, ox, oy = m.info.resolution, m.info.origin.position.x, m.info.origin.position.y
+        x, y = ox + (ix + 0.5) * res, oy + (iy + 0.5) * res
+        inside = np.zeros(len(x), bool)
+        for x0, y0, x1, y1, _ in G.VOIDS.values():
+            inside |= (x > x0 + 0.3) & (x < x1 - 0.3) & (y > y0 + 0.3) & (y < y1 - 0.3)
+        k = int(inside.sum())
+        if k > 0 and self.drop_t is None:
+            self.drop_t = round(self.now(), 2)
+        self.drop_max = max(self.drop_max, k)
+        self.drop_n += 1
+
+    def on_ystat(self, m):
+        st = json.loads(m.data)
+        if st.get("event") == "plan":
+            self.y_plan = st
+        elif st.get("event") == "end":
+            self.y_end = st
 
     def on_gt(self, m):
         p = m.pose.pose
@@ -410,6 +446,14 @@ class Runner:
                 events.append(dict(t=round(t, 2), kind="backup_end",
                                    result="succeeded" if res_b == TaskResult.SUCCEEDED else "stopped"))
                 phase, wait_until = "wait", t + G.YIELD_REST
+            if phase == "memback":                              # v6 ①: safe_backup의 후진이 끝나기를 기다린다
+                rclpy.spin_once(nav, timeout_sec=0.1)
+                if fell_at is None and self.y_end is not None:
+                    events.append(dict(t=round(t, 2), kind="backup_end",
+                                       result="succeeded" if self.y_end["result"] == "succeeded" else "stopped",
+                                       why=self.y_end["result"]))
+                    phase, wait_until = "wait", t + G.YIELD_REST
+                continue
             if phase == "wait":
                 rclpy.spin_once(nav, timeout_sec=0.1)           # 끝난 작업만 있으면 isTaskComplete가 돌지 않아 /clock이 멈춘 것처럼 보인다
                 if fell_at is None and t >= wait_until:
@@ -457,6 +501,11 @@ class Runner:
                         req.reference_frame = "world"
                         self.call(self.spawn, req)
                         blockers.append(req.name)
+                    if self.ymode == "memory":
+                        self.y_req.publish(Float32(data=float(back_dist)))
+                        events.append(dict(t=round(t, 2), kind="backup", dist=round(back_dist, 3), by="safe_backup"))
+                        phase = "memback"
+                        continue
                     nav.backup(backup_dist=float(back_dist), backup_speed=G.YIELD_SPEED,
                                time_allowance=int(back_dist / G.YIELD_SPEED) + 10)
                     events.append(dict(t=round(t, 2), kind="backup", dist=round(back_dist, 3)))
@@ -494,6 +543,9 @@ class Runner:
                       keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel,
                       ir_r=G.IR_RADIUS, cam_kill_x=self.cam_kill_x,
                       world=G.WORLD, wheel_acc=G.WHEEL_ACC, sense_delay=G.SENSE_DELAY,
+                      yield_d=G.YIELD_D, yield_plan=self.y_plan,
+                      drop_marks_max=self.drop_max if G.CONDITIONS[self.cond].get("nav2_voxel") else None,
+                      drop_marks_t=self.drop_t, drop_msgs=self.drop_n,
                       min_person=round(self.min_person, 3) if self.min_person < 9e9 else None, contact_n=self.contact_n,
                       contact_v=round(self.contact_v, 3), close_v=round(self.close_v, 3))
         with open(os.path.join(self.out, "result.json"), "w") as f:

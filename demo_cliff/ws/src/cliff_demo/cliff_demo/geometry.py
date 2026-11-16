@@ -150,6 +150,11 @@ CONDITIONS = {
     "P3n": dict(label="+ 베이즈, 기억 없음", keepout=True, cliff="bayes", frame="odom", memory="none"),
     # P3+: 값 없음 = 모름(3상태) + 정지거리 속도 제한 + IR 기억·후진 + 지면 평면 RANSAC + 거리별 임계 + 시점 변화 게이트
     "P3p": dict(label="P3+ (3상태·속도 제한·IR 기억·지면 평면)", keepout=True, cliff="bayes", frame="odom", ir=True, plus=True),
+    # v6 (11/16): ① 기억을 보고 안전한 만큼만 물러나는 로봇 — P3과 같은 카메라 · 필터 · 기억에, 후진 요청을 safe_backup 노드가 받는다
+    "P3y": dict(label="+ 베이즈 (odom) + 기억 기반 후진", keepout=True, cliff="bayes", frame="odom", yield_mode="memory"),
+    # v6 (11/16): ⑤ Nav2 깊이 레이어가 바닥 아래 점을 찍게 설정한 로봇 — 우리 필터 · 기억 대신 Nav2 VoxelLayer.
+    # cliff_detector는 points 모드로 같은 깊이 영상(같은 센서 결함 주입 · 같은 솎아내기)을 점군으로만 내보낸다 (demo.launch.py)
+    "P2nav": dict(label="+ 깊이 점군 → Nav2 VoxelLayer (바닥 아래 점)", keepout=True, cliff="points", frame="odom", nav2_voxel=True),
 }
 # 낭떠러지 격자 범위: map 프레임은 world와 같고, odom 프레임은 출발 위치(1.3, 4.2, 0°)가 원점
 CLIFF_GRID = {"map": (0.0, 1.5, 120, 110), "odom": (-2.0, -3.0, 130, 120)}
@@ -227,3 +232,11 @@ if WORLD == 2:
         (9.2, 8.5, None), (10.5, 8.5, None), (11.8, 7.6, None), (11.8, 9.4, None), (10.4, 9.4, None),
         (10.2, 8.5, None), (8.3, 8.5, None), (8.2, 6.0, None), (6.0, 3.0, None), (1.6, 3.0, math.pi),
     ]
+
+# ---------------------------------------------------------------------------------------------------------------
+# v6 (11/16): 후진 시나리오의 목적지 ~ 등 뒤 가장자리 거리 d. 기본 0.55 m면 지금까지의 S8과 같다.
+# 목적지는 두 월드 모두 북쪽(+y)을 보고 서서 가장자리(남쪽)를 등지므로, d − 0.55만큼 목적지와 비켜 달라는 사람들을 함께 +y로 옮긴다.
+YIELD_D = float(os.environ.get("CLIFF_YIELD_D", "0.55"))
+_dy = YIELD_D - 0.55
+STAIRSIDE = (STAIRSIDE[0], STAIRSIDE[1] + _dy, STAIRSIDE[2])
+YIELD_PEOPLE = [(px, py + _dy) for px, py in YIELD_PEOPLE]

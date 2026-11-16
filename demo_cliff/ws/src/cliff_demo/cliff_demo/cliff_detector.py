@@ -12,6 +12,7 @@ mode=bayes (제안): 셀마다 이진 베이즈 필터(log-odds). drop +0.9, 바
     frame=odom(제안)이면 기억을 odom 프레임에 둔다 — AMCL이 위치를 고쳐도(map→odom이 바뀌어도) 기억이 로봇과 같이 옮겨진다.
     frame=map이면 위치를 착각한 채 본 가장자리가 그 틀린 자리에 박제된다 (비교용).
 mode=frame (비교): 이번 프레임만 본다. drop이나 nan 셀이 이웃에 2개 이상 뭉치면 낭떠러지 (룸바식 보수적 판정). 기억 없음.
+mode=points (v6 ⑤, 11/16): 판단하지 않는다. 결함 주입까지 거친 깊이를 /cliff_points(카메라 좌표 점군)로 내보내고, Nav2 VoxelLayer가 받는다.
 
 Gazebo는 검은 바닥의 적외선 흡수나 햇빛 간섭을 렌더링하지 못한다. artifacts=true면 참값 위치를 써서
 DARK_MAT 구역 픽셀은 MAT_DROPOUT(기본 75 %) 결측, SUN_PATCH 구역 픽셀은 SUN_OUTLIER(15 %) 이상치로 바꾼다 (센서 결함 주입 — 판단에는 참값을 안 쓴다).
@@ -31,8 +32,9 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
 from geometry_msgs.msg import PointStamped
-from sensor_msgs.msg import CameraInfo, Image
-from std_msgs.msg import Float32
+from sensor_msgs.msg import CameraInfo, Image, PointCloud2
+from sensor_msgs_py import point_cloud2
+from std_msgs.msg import Float32, Header
 from tf2_ros import Buffer, TransformListener
 
 from cliff_demo import geometry as G
@@ -163,6 +165,7 @@ class CliffDetector(Node):
         if self.ir_memory:
             self.create_subscription(PointStamped, "/ir_cliff", self.on_ir_cliff, 10)
         self.cap_pub = self.create_publisher(Float32, "/cliff_speed_cap", 10) if self.three_state else None
+        self.pts_pub = self.create_publisher(PointCloud2, "/cliff_points", 2) if self.mode == "points" else None
         self.publish_mask(force=True)
         self.get_logger().info(f"cliff_detector mode={self.mode} artifacts={self.artifacts}")
 
@@ -302,6 +305,16 @@ class CliffDetector(Node):
             if void_px is not None:
                 d[void_px] = np.nan
             valid = np.isfinite(d) & (d > 0.15) & (d < 3.99)
+
+        if self.mode == "points":
+            # v6 ⑤ (11/16): 판단은 하지 않고, 같은 결함 주입 · 같은 솎아내기를 거친 깊이를 카메라 좌표 점군으로만 내보낸다.
+            # 프레임을 camera_optical로 두어야 Nav2 VoxelLayer가 광선 지우기의 원점을 카메라로 잡는다. 결측(NaN)은 점이 없다.
+            pts = (np.where(valid, d, 0.0)[:, None] * ray)[valid].astype(np.float32)
+            hdr = Header(stamp=msg.header.stamp, frame_id=msg.header.frame_id or "camera_optical")
+            self.pts_pub.publish(point_cloud2.create_cloud_xyz32(hdr, pts))
+            self.n_frames += 1
+            self.publish_mask()                   # 빈 마스크(아무도 안 받음) — 처리한 프레임 수를 cliff.jsonl에 남기려고
+            return
 
         if self.pitch_k:
             # 실험: 가속하면 차체가 들리는데 소프트웨어는 고정 외부 파라미터를 믿는다 → 광선이 δ만큼 더 아래를 향한다고 착각

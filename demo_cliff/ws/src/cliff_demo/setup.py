@@ -24,6 +24,7 @@ setup(
             "scenario = cliff_demo.scenario:main",
             "map_builder = cliff_demo.map_builder:main",
             "ir_guard = cliff_demo.ir_guard:main",
+            "safe_backup = cliff_demo.safe_backup:main",
         ],
     },
 )
