@@ -69,6 +69,9 @@ def setup(context):
                           "min_obstacle_height": -3.0, "max_obstacle_height": -0.08,
                           "marking": True, "clearing": True},
             }
+            if cm == "global_costmap":
+                # 기록용 (v6 사전 시험 뒤 11-17): 평가 노드가 VoxelLayer가 찍은 칸만 세려고 복셀 격자를 내보낸다. 로봇 동작에는 영향이 없다
+                r["drop_layer"]["publish_voxel_map"] = True
     ring = bool(cond.get("keepout_ring")) or a["keepout_ring"].lower() == "true"   # v2는 모든 방식이 띠 keepout
     mask = G.MASK_PREFIX + "keepout_" + "".join(scen["keepout"]) + ("_ring" if ring else "")
     p["filter_mask_server"]["ros__parameters"]["yaml_filename"] = os.path.join(pkg, "maps", mask + ".yaml")

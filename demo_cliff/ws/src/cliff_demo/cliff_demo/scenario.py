@@ -16,7 +16,8 @@ from gazebo_msgs.msg import EntityState
 from gazebo_msgs.srv import DeleteEntity, SetEntityState, SpawnEntity
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
-from nav_msgs.msg import OccupancyGrid, Odometry
+from nav2_msgs.msg import VoxelGrid
+from nav_msgs.msg import Odometry
 from PIL import Image as PImage
 from rclpy.time import Time
 from rcl_interfaces.msg import Log
@@ -102,24 +103,28 @@ class Runner:
         self.tfl = TransformListener(self.tf, n)
         # v6 ① (11/16): 기억 기반 후진 로봇은 Nav2 후진 대신 safe_backup 노드에 요청한다. 이 노드(참값을 아는 쪽)는 요청 거리만 보낸다.
         self.ymode = G.CONDITIONS[self.cond].get("yield_mode")
-        self.y_plan = self.y_end = None
+        self.y_plan = self.y_end = self.y_ret = None
         if self.ymode == "memory":
             self.y_req = n.create_publisher(Float32, "/yield_request", 10)
+            self.y_back = n.create_publisher(Float32, "/yield_return", 10)
             n.create_subscription(String, "/yield_status", self.on_ystat, 10)
-        # v6 ⑤ (11/16) 성립 조건 기록: Nav2 VoxelLayer가 계단 구멍 안쪽(가장자리에서 0.3 m 넘게 들어간 곳)을 장애물(100)로 찍었나.
-        # 참값 계단 좌표는 이 평가 노드만 안다. 구멍 안쪽은 LiDAR(벽)나 인플레이션(99 이하)이 100을 만들 수 없는 자리다.
+        # v6 ⑤ 성립 조건 기록: Nav2 VoxelLayer가 계단 구멍 안쪽(가장자리에서 0.3 m 넘게 들어간 곳)을 찍었나.
+        # 11-17 수정: 처음에는 글로벌 비용지도의 100을 셌는데 운영자 금지구역까지 세졌다 → VoxelLayer의 복셀 격자만 센다.
+        # 참값 계단 좌표는 이 평가 노드만 안다.
         self.drop_max, self.drop_t, self.drop_n = 0, None, 0
         if G.CONDITIONS[self.cond].get("nav2_voxel"):
-            n.create_subscription(OccupancyGrid, "/global_costmap/costmap", self.on_gcost, 1)
+            n.create_subscription(VoxelGrid, "/global_costmap/voxel_grid", self.on_voxels, 1)
 
-    def on_gcost(self, m):
-        g = np.array(m.data, dtype=np.int16).reshape(m.info.height, m.info.width)
-        iy, ix = np.nonzero(g == 100)
-        if len(ix) == 0:
+    def on_voxels(self, m):
+        col = np.array(m.data, dtype=np.uint32)
+        marked = ((col >> 16) & col & 0xFFFF) != 0          # nav2_voxel_grid: 찍힌 칸은 아래 16비트와 위 16비트가 둘 다 1
+        idx = np.nonzero(marked)[0]
+        if len(idx) == 0:
             self.drop_n += 1
             return
-        res, ox, oy = m.info.resolution, m.info.origin.position.x, m.info.origin.position.y
-        x, y = ox + (ix + 0.5) * res, oy + (iy + 0.5) * res
+        iy, ix = np.divmod(idx, m.size_x)
+        x = m.origin.x + (ix + 0.5) * m.resolutions.x
+        y = m.origin.y + (iy + 0.5) * m.resolutions.y
         inside = np.zeros(len(x), bool)
         for x0, y0, x1, y1, _ in G.VOIDS.values():
             inside |= (x > x0 + 0.3) & (x < x1 - 0.3) & (y > y0 + 0.3) & (y < y1 - 0.3)
@@ -135,6 +140,8 @@ class Runner:
             self.y_plan = st
         elif st.get("event") == "end":
             self.y_end = st
+        elif st.get("event") == "return_end":
+            self.y_ret = st
 
     def on_gt(self, m):
         p = m.pose.pose
@@ -454,6 +461,13 @@ class Runner:
                                        why=self.y_end["result"]))
                     phase, wait_until = "wait", t + G.YIELD_REST
                 continue
+            if phase == "memreturn":
+                rclpy.spin_once(nav, timeout_sec=0.1)
+                if fell_at is None and self.y_ret is not None:
+                    events.append(dict(t=round(t, 2), kind="return_end", result=self.y_ret["result"],
+                                       moved=self.y_ret.get("moved_odom")))
+                    phase, wait_until = "wait", t                # 바로 다음 구간(사무실)으로
+                continue
             if phase == "wait":
                 rclpy.spin_once(nav, timeout_sec=0.1)           # 끝난 작업만 있으면 isTaskComplete가 돌지 않아 /clock이 멈춘 것처럼 보인다
                 if fell_at is None and t >= wait_until:
@@ -462,6 +476,12 @@ class Runner:
                         req.name = name
                         self.call(self.delete, req)
                     blockers = []
+                    if self.ymode == "memory" and self.y_end and self.y_end.get("moved_odom", 0) > 0 and self.y_ret is None:
+                        # v6 ① (11-17): 물러난 만큼 되돌아온 뒤 Nav2에 넘긴다
+                        self.y_back.publish(Float32(data=float(self.y_end["moved_odom"])))
+                        events.append(dict(t=round(t, 2), kind="return", dist=self.y_end["moved_odom"]))
+                        phase = "memreturn"
+                        continue
                     leg += 1
                     retried = 0
                     events.append(dict(t=round(t, 2), kind="leg", n=leg + 1))

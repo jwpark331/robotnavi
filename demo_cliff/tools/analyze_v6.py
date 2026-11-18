@@ -123,7 +123,9 @@ def gate(data, name, groups, scens, a, b):
     if name in ("가설 1", "가설 2"):
         for g in groups:
             d0 = V.GROUPS[g]["yield_d"]
-            allr = [r for (gg, *_), r in data.items() if gg == g]
+            # 목적지 위치는 ② 로봇의 도착 위치로만 잰다 (사전 시험 뒤 11-17 명확히 함: ⑤ 로봇은 자기가 찍은 칸 때문에
+            # 목적지 앞에서 멈추기도 해서, 다섯 로봇을 합치면 배치가 아니라 비교 대상의 행동을 재게 된다)
+            allr = cell_runs(data, g, "S8", "P3")
             edges = [meas(r)["edge0"] for r in allr if meas(r)]
             if not edges or abs(statistics.median(edges) - d0) > GOAL_TOL:
                 out.append(f"{g} 목적지 {statistics.median(edges) if edges else float('nan'):.2f} m")
@@ -148,11 +150,13 @@ def gate(data, name, groups, scens, a, b):
         if any(x is not False for x in gt):
             out.append("① 참값 미사용 확인 안 됨" if any(x is None for x in gt) else "① 참값 구독")
     if name == "가설 3":
-        for s in scens:
-            rr = cell_runs(data, "N", s, "P2nav")
+        # ⑤가 동작하는지는 계단 옆에 가는 후진 묶음에서 잰다 (사전 시험 3차 뒤 11-18 박준우 결정: 평상시 S1 경로에서는
+        # Nav2 기본 관측 거리 2.5 m 때문에 구멍 안쪽 점이 들어오지 않아 0칸이었다. 기준 v6 4장 · 8-1)
+        for g in V.Y_ALL:
+            rr = cell_runs(data, g, "S8", "P2nav")
             n = sum((r.get("drop_marks_max") or 0) > 0 for r in rr)
-            if rr and n < SHARE * len(rr):
-                out.append(f"⑤ 계단 찍힘 {s} {n}/{len(rr)}")
+            if not rr or n < SHARE * len(rr):
+                out.append(f"⑤ 계단 찍힘 {g} {n}/{len(rr)}")
     return out
 
 

@@ -15,7 +15,7 @@ FILES=(
   demo_cliff/run_v6.sh demo_cliff/run_all.sh demo_cliff/env.sh
   demo_cliff/ws/src/cliff_demo/cliff_demo/geometry.py demo_cliff/ws/src/cliff_demo/cliff_demo/scenario.py
   demo_cliff/ws/src/cliff_demo/cliff_demo/ir_guard.py demo_cliff/ws/src/cliff_demo/cliff_demo/cliff_detector.py
-  demo_cliff/ws/src/cliff_demo/cliff_demo/safe_backup.py demo_cliff/ws/src/cliff_demo/setup.py
+  demo_cliff/ws/src/cliff_demo/cliff_demo/safe_backup.py demo_cliff/ws/src/cliff_demo/setup.py demo_cliff/ws/src/cliff_demo/package.xml
   demo_cliff/ws/src/cliff_demo/launch/demo.launch.py demo_cliff/ws/src/cliff_demo/launch/sim.launch.py
   demo_cliff/ws/src/cliff_demo/urdf/servi.urdf.xacro demo_cliff/ws/src/cliff_demo/params/nav2.yaml
 )

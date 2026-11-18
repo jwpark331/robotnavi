@@ -1,6 +1,8 @@
 """기억 기반 후진 (판정 기준 v6 ①, 11/16): 후진 요청을 받으면 기억한 낭떠러지 금지 칸 앞까지만 물러난다.
 
 /yield_request(Float32, 요청 거리 r [m]) → 갈 수 있는 거리 a를 계산 → min(r, a)만큼 0.10 m/s로 후진 → /yield_status(String, JSON).
+/yield_return(Float32, 거리 [m]) → 그만큼 앞으로 되돌아온다 (사전 시험 뒤 11-17: 0.3 m 여유까지 물러나면 몸이 금지 띠에 걸려
+  Nav2가 움직이지 못했다. 사람이 지나간 뒤 물러난 만큼 되돌아와 Nav2에 넘긴다. 앞쪽도 같은 방법으로 금지 칸 앞까지만 간다).
   a: 로봇 중심이 뒤쪽 직선 위에서 /cliff_filter_mask의 금지 칸(값 100)에 닿기 전까지의 거리.
      cliff_detector의 금지 칸은 기억한 낭떠러지 칸에서 0.30 m까지 퍼져 있으므로 "기억한 가장자리에서 0.30 m 앞까지"다.
      격자 밖은 기억이 없는 곳이라 그 앞에서 멈춘다 (보수적으로).
@@ -32,19 +34,27 @@ def yaw_of(q):
     return math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y ** 2 + q.z ** 2))
 
 
-def allowed_backup(grid, info, x, y, yaw, limit):
+def allowed_backup(grid, info, x, y, yaw, limit, skip_start=False):
     """(x, y, yaw)에서 뒤로 갈 수 있는 거리 [m]. grid는 (높이, 폭) 배열, info는 (원점 x, 원점 y, 해상도).
-    limit까지만 훑는다. 금지 칸이나 격자 밖을 만나면 그 직전 거리를 돌려준다."""
+    limit까지만 훑는다. 금지 칸이나 격자 밖을 만나면 그 직전 거리를 돌려준다.
+    skip_start=True면 지금 서 있는 금지 칸들(출발점에서 이어진 것)은 건너뛰고 그다음 금지 칸 앞에서 멈춘다 —
+    되돌아오기용 (11-18: 물러난 끝이 금지 띠 경계 칸이면 되돌아오기가 0이 되어 다시 갇혔다)."""
     ox, oy, res = info
     h, w = grid.shape
     c, s = math.cos(yaw), math.sin(yaw)
     n = int(math.ceil(limit / STEP))
+    leaving = skip_start
     for k in range(n + 1):
         d = k * STEP
         px, py = x - d * c, y - d * s
         ix, iy = int(math.floor((px - ox) / res)), int(math.floor((py - oy) / res))
-        if not (0 <= ix < w and 0 <= iy < h) or grid[iy, ix] >= LETHAL:
+        if not (0 <= ix < w and 0 <= iy < h):
             return max(0.0, d - STEP)
+        if grid[iy, ix] >= LETHAL:
+            if leaving:
+                continue
+            return max(0.0, d - STEP)
+        leaving = False
     return limit
 
 
@@ -69,6 +79,7 @@ class SafeBackup(Node):
         self.create_subscription(OccupancyGrid, "/cliff_filter_mask", self.on_mask, qos)
         self.create_subscription(Odometry, "/odom", self.on_odom, 20)
         self.create_subscription(Float32, "/yield_request", self.on_request, 10)
+        self.create_subscription(Float32, "/yield_return", self.on_return, 10)
         self.cmd = self.create_publisher(Twist, "/cmd_vel", 10)
         self.status = self.create_publisher(String, "/yield_status", 10)
         self.create_timer(0.05, self.tick)
@@ -103,7 +114,22 @@ class SafeBackup(Node):
         if target < MIN_MOVE:
             self.finish("refused", 0.0)
             return
-        self.job = dict(target=target, x0=self.pose[0], y0=self.pose[1],
+        self.job = dict(target=target, x0=self.pose[0], y0=self.pose[1], sign=-1.0, tag="",
+                        t0=self.get_clock().now().nanoseconds * 1e-9, limit=target / SPEED + 5.0)
+
+    def on_return(self, m):
+        want = float(m.data)
+        a = 0.0
+        if self.pose is not None and self.grid is not None:
+            x, y, yaw = self.pose
+            a = allowed_backup(self.grid, self.info, x, y, yaw + math.pi, want + MIN_MOVE, skip_start=True)   # 앞쪽 = 뒤로 돌린 방향
+        target = min(want, a)
+        rec = self.write(dict(kind="return_request", want=round(want, 3), a=round(a, 3), target=round(target, 3)))
+        self.status.publish(String(data=json.dumps(dict(event="return_plan", **rec))))
+        if target < MIN_MOVE:
+            self.finish("refused", 0.0, tag="return_")
+            return
+        self.job = dict(target=target, x0=self.pose[0], y0=self.pose[1], sign=1.0, tag="return_",
                         t0=self.get_clock().now().nanoseconds * 1e-9, limit=target / SPEED + 5.0)
 
     def tick(self):
@@ -113,19 +139,19 @@ class SafeBackup(Node):
         moved = math.hypot(self.pose[0] - j["x0"], self.pose[1] - j["y0"])
         now = self.get_clock().now().nanoseconds * 1e-9
         if moved >= j["target"] - 0.005:
-            self.finish("succeeded", moved)
+            self.finish("succeeded", moved, j["tag"])
         elif now - j["t0"] > j["limit"]:
-            self.finish("timeout", moved)
+            self.finish("timeout", moved, j["tag"])
         else:
             tw = Twist()
-            tw.linear.x = -SPEED
+            tw.linear.x = j["sign"] * SPEED
             self.cmd.publish(tw)
 
-    def finish(self, result, moved):
+    def finish(self, result, moved, tag=""):
         self.job = None
         self.cmd.publish(Twist())
-        rec = self.write(dict(kind="end", result=result, moved_odom=round(moved, 3)))
-        self.status.publish(String(data=json.dumps(dict(event="end", **rec))))
+        rec = self.write(dict(kind=tag + "end", result=result, moved_odom=round(moved, 3)))
+        self.status.publish(String(data=json.dumps(dict(event=tag + "end", **rec))))
 
 
 def main():

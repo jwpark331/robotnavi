@@ -49,6 +49,12 @@ def main():
             good = abs(a - hand) <= 0.05 + 1e-9
             ok &= good
             print(f"| {d:.2f} | {r:.1f} | {a:.2f} | {hand:.2f} | {a - hand:+.2f} | {'통과' if good else '실패'} |")
+    # 되돌아오기 (11-18): 금지 띠 경계(가장자리 0.25 m, 금지 칸 안)에 서서 앞으로 0.35 m → 지금 칸을 건너뛰고 끝까지 간다
+    f = allowed_backup(g, info, 9.0, EDGE_Y + 0.25, math.pi / 2 + math.pi, 0.40, skip_start=True)
+    f0 = allowed_backup(g, info, 9.0, EDGE_Y + 0.25, math.pi / 2 + math.pi, 0.40)
+    print(f"\n되돌아오기: 금지 칸 위에서 앞으로 a = {f:.2f} (0.40이어야 함), 건너뛰기 없이 {f0:.2f} (0이어야 함) → "
+          f"{'통과' if abs(f - 0.40) < 1e-6 and f0 == 0 else '실패'}")
+    ok &= abs(f - 0.40) < 1e-6 and f0 == 0
     # 기억이 없으면(빈 마스크) 격자 끝까지 갈 수 있다 → 요청 거리만큼
     a0 = allowed_backup(np.zeros_like(g), info, 9.0, 5.95, math.pi / 2, 0.95)
     print(f"\n빈 마스크: a = {a0:.2f} (요청 상한 0.95와 같아야 함) → {'통과' if abs(a0 - 0.95) < 1e-6 else '실패'}")

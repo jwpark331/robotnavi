@@ -5,7 +5,7 @@
 # 결과: $RES/v6_pilot/  (회차 폴더 + unit.md + analysis.md)
 cd "$(dirname "$0")"
 RES=${RES:-results_$(hostname)}
-P=$RES/v6_pilot
+P=${PILOT_DIR:-$RES/v6_pilot}
 PARTS=${PARTS:-"unit backup normal"}
 SEED=${SEED:-591}
 source env.sh
@@ -23,7 +23,7 @@ if grep -qw backup <<<"$PARTS"; then
     g="Y-w$world-d$(python3 -c "print(f'{int(round($yd*100)):03d}')")"
     mat=""; [ "$world" = 2 ] && mat=$W2_MAT
     CLIFF_WORLD=$world CLIFF_W2_MAT=$mat CLIFF_YIELD_D=$yd RING=true OUT=$P/$g SCENS=S8 \
-      CONDS="P3y P3 P3n P1irb P2nav" SEEDS=$SEED NOREPORT=1 ./run_all.sh </dev/null
+      CONDS="${PILOT_CONDS:-P3y P3 P3n P1irb P2nav}" SEEDS=$SEED NOREPORT=1 ./run_all.sh </dev/null
   done; done
 fi
 if grep -qw normal <<<"$PARTS"; then

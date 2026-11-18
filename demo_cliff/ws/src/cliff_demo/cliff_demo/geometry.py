@@ -237,6 +237,10 @@ if WORLD == 2:
 # v6 (11/16): 후진 시나리오의 목적지 ~ 등 뒤 가장자리 거리 d. 기본 0.55 m면 지금까지의 S8과 같다.
 # 목적지는 두 월드 모두 북쪽(+y)을 보고 서서 가장자리(남쪽)를 등지므로, d − 0.55만큼 목적지와 비켜 달라는 사람들을 함께 +y로 옮긴다.
 YIELD_D = float(os.environ.get("CLIFF_YIELD_D", "0.55"))
-_dy = YIELD_D - 0.55
+# 도착 보정 (v6 사전 시험 뒤 11-17, 기준 v6 3장 '월드마다 사전 시험에서 참값 거리를 확인한다'): Nav2 도착 허용 오차 때문에
+# 1.10 m 목적지에서는 로봇이 계단 쪽에서 멈췄다 (①–④ 도착 평균 월드 1 1.04 m, 월드 2 0.99 m). 1.10 m 칸에만 그만큼 더 옮긴다.
+# 0.55 m 칸은 평균 0.56 m로 맞아서 그대로다 (지금까지의 S8과 같은 좌표).
+YIELD_CAL = {1: 0.05, 2: 0.10} if abs(YIELD_D - 1.10) < 1e-6 else {1: 0.0, 2: 0.0}
+_dy = YIELD_D - 0.55 + YIELD_CAL[WORLD]
 STAIRSIDE = (STAIRSIDE[0], STAIRSIDE[1] + _dy, STAIRSIDE[2])
 YIELD_PEOPLE = [(px, py + _dy) for px, py in YIELD_PEOPLE]
