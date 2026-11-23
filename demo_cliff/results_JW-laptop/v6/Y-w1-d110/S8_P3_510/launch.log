@@ -1,0 +1,904 @@
+[INFO] [launch]: All log files can be found below /home/jw/.ros/log/2026-11-18-15-10-04-215172-JW-laptop-145062
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [gzserver-1]: process started with pid [145063]
+[INFO] [robot_state_publisher-2]: process started with pid [145065]
+[INFO] [ir_guard-3]: process started with pid [145067]
+[INFO] [spawn_entity.py-4]: process started with pid [145069]
+[INFO] [map_server-5]: process started with pid [145071]
+[INFO] [amcl-6]: process started with pid [145073]
+[INFO] [lifecycle_manager-7]: process started with pid [145075]
+[INFO] [controller_server-8]: process started with pid [145077]
+[INFO] [smoother_server-9]: process started with pid [145079]
+[INFO] [planner_server-10]: process started with pid [145083]
+[INFO] [behavior_server-11]: process started with pid [145085]
+[INFO] [bt_navigator-12]: process started with pid [145087]
+[INFO] [waypoint_follower-13]: process started with pid [145089]
+[INFO] [velocity_smoother-14]: process started with pid [145091]
+[INFO] [lifecycle_manager-15]: process started with pid [145093]
+[INFO] [map_server-16]: process started with pid [145102]
+[INFO] [costmap_filter_info_server-17]: process started with pid [145178]
+[INFO] [costmap_filter_info_server-18]: process started with pid [145239]
+[INFO] [cliff_detector-19]: process started with pid [145243]
+[INFO] [lifecycle_manager-20]: process started with pid [145245]
+[INFO] [scenario-21]: process started with pid [145247]
+[robot_state_publisher-2] [INFO] [1794982204.932084835] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-2] [INFO] [1794982204.932171476] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-2] [INFO] [1794982204.932179892] [robot_state_publisher]: got segment camera_link
+[robot_state_publisher-2] [INFO] [1794982204.932185091] [robot_state_publisher]: got segment camera_optical
+[robot_state_publisher-2] [INFO] [1794982204.932190592] [robot_state_publisher]: got segment front_caster
+[robot_state_publisher-2] [INFO] [1794982204.932195160] [robot_state_publisher]: got segment ir_l160
+[robot_state_publisher-2] [INFO] [1794982204.932199819] [robot_state_publisher]: got segment ir_l20
+[robot_state_publisher-2] [INFO] [1794982204.932204327] [robot_state_publisher]: got segment ir_l60
+[robot_state_publisher-2] [INFO] [1794982204.932208976] [robot_state_publisher]: got segment ir_r160
+[robot_state_publisher-2] [INFO] [1794982204.932213855] [robot_state_publisher]: got segment ir_r20
+[robot_state_publisher-2] [INFO] [1794982204.932218353] [robot_state_publisher]: got segment ir_r60
+[robot_state_publisher-2] [INFO] [1794982204.932222641] [robot_state_publisher]: got segment laser
+[robot_state_publisher-2] [INFO] [1794982204.932227450] [robot_state_publisher]: got segment left_wheel
+[robot_state_publisher-2] [INFO] [1794982204.932231969] [robot_state_publisher]: got segment rear_caster
+[robot_state_publisher-2] [INFO] [1794982204.932236257] [robot_state_publisher]: got segment right_wheel
+[map_server-5] [INFO] [1794982204.943313008] [map_server]: 
+[map_server-5] 	map_server lifecycle node launched. 
+[map_server-5] 	Waiting on external lifecycle transitions to activate
+[map_server-5] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-5] [INFO] [1794982204.943396254] [map_server]: Creating
+[map_server-5] [INFO] [1794982204.954484446] [map_server]: Configuring
+[map_server-5] [INFO] [1794982204.954549157] [map_io]: Loading yaml file: /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/city_hall.yaml
+[map_server-5] [INFO] [1794982204.954771161] [map_io]: resolution: 0.05
+[map_server-5] [INFO] [1794982204.954778675] [map_io]: origin[0]: 0.54
+[map_server-5] [INFO] [1794982204.954781671] [map_io]: origin[1]: 2.63
+[map_server-5] [INFO] [1794982204.954784576] [map_io]: origin[2]: 0
+[map_server-5] [INFO] [1794982204.954787672] [map_io]: free_thresh: 0.25
+[map_server-5] [INFO] [1794982204.954790717] [map_io]: occupied_thresh: 0.65
+[map_server-5] [INFO] [1794982204.954794094] [map_io]: mode: trinary
+[map_server-5] [INFO] [1794982204.954797851] [map_io]: negate: 0
+[map_server-5] [INFO] [1794982204.954958891] [map_io]: Loading image_file: /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/city_hall.pgm
+[map_server-5] [INFO] [1794982204.959003201] [map_io]: Read map /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/city_hall.pgm: 210 X 171 map @ 0.05 m/cell
+[amcl-6] [INFO] [1794982204.939209418] [amcl]: 
+[amcl-6] 	amcl lifecycle node launched. 
+[amcl-6] 	Waiting on external lifecycle transitions to activate
+[amcl-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-6] [INFO] [1794982204.939511661] [amcl]: Creating
+[lifecycle_manager-7] [INFO] [1794982204.935657385] [lifecycle_manager_localization]: Creating
+[lifecycle_manager-7] [INFO] [1794982204.937979374] [lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-7] [INFO] [1794982204.954255059] [lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-7] [INFO] [1794982204.954304581] [lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[controller_server-8] [INFO] [1794982204.937454716] [controller_server]: 
+[controller_server-8] 	controller_server lifecycle node launched. 
+[controller_server-8] 	Waiting on external lifecycle transitions to activate
+[controller_server-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-8] [INFO] [1794982204.941804125] [controller_server]: Creating controller server
+[controller_server-8] [INFO] [1794982204.946539644] [local_costmap.local_costmap]: 
+[controller_server-8] 	local_costmap lifecycle node launched. 
+[controller_server-8] 	Waiting on external lifecycle transitions to activate
+[controller_server-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-8] [INFO] [1794982204.946860853] [local_costmap.local_costmap]: Creating Costmap
+[smoother_server-9] [INFO] [1794982204.938272000] [smoother_server]: 
+[smoother_server-9] 	smoother_server lifecycle node launched. 
+[smoother_server-9] 	Waiting on external lifecycle transitions to activate
+[smoother_server-9] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[smoother_server-9] [INFO] [1794982204.939456097] [smoother_server]: Creating smoother server
+[planner_server-10] [INFO] [1794982204.937772569] [planner_server]: 
+[planner_server-10] 	planner_server lifecycle node launched. 
+[planner_server-10] 	Waiting on external lifecycle transitions to activate
+[planner_server-10] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-10] [INFO] [1794982204.938881587] [planner_server]: Creating
+[planner_server-10] [INFO] [1794982204.943681365] [global_costmap.global_costmap]: 
+[planner_server-10] 	global_costmap lifecycle node launched. 
+[planner_server-10] 	Waiting on external lifecycle transitions to activate
+[planner_server-10] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-10] [INFO] [1794982204.944029043] [global_costmap.global_costmap]: Creating Costmap
+[behavior_server-11] [INFO] [1794982204.945946258] [behavior_server]: 
+[behavior_server-11] 	behavior_server lifecycle node launched. 
+[behavior_server-11] 	Waiting on external lifecycle transitions to activate
+[behavior_server-11] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-12] [INFO] [1794982204.945224392] [bt_navigator]: 
+[bt_navigator-12] 	bt_navigator lifecycle node launched. 
+[bt_navigator-12] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-12] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-12] [INFO] [1794982204.945310082] [bt_navigator]: Creating
+[waypoint_follower-13] [INFO] [1794982204.937460647] [waypoint_follower]: 
+[waypoint_follower-13] 	waypoint_follower lifecycle node launched. 
+[waypoint_follower-13] 	Waiting on external lifecycle transitions to activate
+[waypoint_follower-13] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[waypoint_follower-13] [INFO] [1794982204.937819837] [waypoint_follower]: Creating
+[velocity_smoother-14] [INFO] [1794982204.938240992] [velocity_smoother]: 
+[velocity_smoother-14] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-14] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-14] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-15] [INFO] [1794982204.937232011] [lifecycle_manager_navigation]: Creating
+[lifecycle_manager-15] [INFO] [1794982204.938672627] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[map_server-16] [INFO] [1794982204.957742100] [filter_mask_server]: 
+[map_server-16] 	filter_mask_server lifecycle node launched. 
+[map_server-16] 	Waiting on external lifecycle transitions to activate
+[map_server-16] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-16] [INFO] [1794982204.957833951] [filter_mask_server]: Creating
+[costmap_filter_info_server-17] [INFO] [1794982204.954783464] [costmap_filter_info_server]: This is costmap filter info publisher
+[costmap_filter_info_server-17] [INFO] [1794982204.964275962] [costmap_filter_info_server]: 
+[costmap_filter_info_server-17] 	costmap_filter_info_server lifecycle node launched. 
+[costmap_filter_info_server-17] 	Waiting on external lifecycle transitions to activate
+[costmap_filter_info_server-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-7] [INFO] [1794982204.967764826] [lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[amcl-6] [INFO] [1794982204.967917311] [amcl]: Configuring
+[amcl-6] [INFO] [1794982204.967994274] [amcl]: initTransforms
+[amcl-6] [INFO] [1794982204.972167014] [amcl]: initPubSub
+[costmap_filter_info_server-18] [INFO] [1794982204.973739005] [costmap_filter_info_server]: This is costmap filter info publisher
+[amcl-6] [INFO] [1794982204.974610840] [amcl]: Subscribed to map topic.
+[lifecycle_manager-7] [INFO] [1794982204.978349290] [lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-5] [INFO] [1794982204.978497967] [map_server]: Activating
+[map_server-5] [INFO] [1794982204.978619895] [map_server]: Creating bond (map_server) to lifecycle manager.
+[lifecycle_manager-20] [INFO] [1794982204.979064273] [lifecycle_manager_filters]: Creating
+[amcl-6] [INFO] [1794982204.979095041] [amcl]: Received a 210 X 171 map @ 0.050 m/pix
+[costmap_filter_info_server-18] [INFO] [1794982204.980264301] [cliff_filter_info_server]: 
+[costmap_filter_info_server-18] 	cliff_filter_info_server lifecycle node launched. 
+[costmap_filter_info_server-18] 	Waiting on external lifecycle transitions to activate
+[costmap_filter_info_server-18] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-20] [INFO] [1794982204.980964506] [lifecycle_manager_filters]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-15] [INFO] [1794982205.054326712] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-15] [INFO] [1794982205.054373800] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-8] [INFO] [1794982205.054509263] [controller_server]: Configuring controller interface
+[controller_server-8] [INFO] [1794982205.054655736] [controller_server]: getting goal checker plugins..
+[controller_server-8] [INFO] [1794982205.054755922] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-8] [INFO] [1794982205.054778244] [local_costmap.local_costmap]: Configuring
+[controller_server-8] [INFO] [1794982205.056970020] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-8] [INFO] [1794982205.059456867] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-8] [INFO] [1794982205.061171864] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-8] [INFO] [1794982205.061198564] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-8] [INFO] [1794982205.061747528] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-8] [INFO] [1794982205.061764760] [local_costmap.local_costmap]: Using costmap filter "keepout_filter"
+[controller_server-8] [INFO] [1794982205.063230933] [local_costmap.local_costmap]: Initialized costmap filter "keepout_filter"
+[controller_server-8] [INFO] [1794982205.063253766] [local_costmap.local_costmap]: Using costmap filter "cliff_filter"
+[controller_server-8] [INFO] [1794982205.063695620] [local_costmap.local_costmap]: Initialized costmap filter "cliff_filter"
+[controller_server-8] [INFO] [1794982205.067009097] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-8] [INFO] [1794982205.067554554] [controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-8] [INFO] [1794982205.067820320] [controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[controller_server-8] [INFO] [1794982205.068735726] [controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[controller_server-8] [INFO] [1794982205.069533173] [controller_server]: Setting transform_tolerance to 0.200000
+[controller_server-8] [INFO] [1794982205.074242233] [controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[controller_server-8] [INFO] [1794982205.074696951] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.074814951] [controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[controller_server-8] [INFO] [1794982205.075212632] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.075313049] [controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
+[controller_server-8] [INFO] [1794982205.075469210] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.075572223] [controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[controller_server-8] [INFO] [1794982205.075859729] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.075958032] [controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[controller_server-8] [INFO] [1794982205.076240328] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.076341827] [controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[controller_server-8] [INFO] [1794982205.076551839] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.076662816] [controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[controller_server-8] [INFO] [1794982205.076869351] [controller_server]: Critic plugin initialized
+[controller_server-8] [INFO] [1794982205.076885441] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-15] [INFO] [1794982205.079599892] [lifecycle_manager_navigation]: [34m[1mConfiguring smoother_server[0m[0m
+[smoother_server-9] [INFO] [1794982205.079747056] [smoother_server]: Configuring smoother server
+[smoother_server-9] [INFO] [1794982205.084295556] [smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[smoother_server-9] [INFO] [1794982205.084779098] [smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[lifecycle_manager-15] [INFO] [1794982205.086621432] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-10] [INFO] [1794982205.086782212] [planner_server]: Configuring
+[planner_server-10] [INFO] [1794982205.086827987] [global_costmap.global_costmap]: Configuring
+[lifecycle_manager-20] [INFO] [1794982205.088431637] [lifecycle_manager_filters]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-20] [INFO] [1794982205.088482212] [lifecycle_manager_filters]: [34m[1mConfiguring filter_mask_server[0m[0m
+[map_server-16] [INFO] [1794982205.088657368] [filter_mask_server]: Configuring
+[map_server-16] [INFO] [1794982205.088726297] [map_io]: Loading yaml file: /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/keepout_B_ring.yaml
+[map_server-16] [INFO] [1794982205.088980711] [map_io]: resolution: 0.05
+[map_server-16] [INFO] [1794982205.088990419] [map_io]: origin[0]: 0.54
+[map_server-16] [INFO] [1794982205.088994006] [map_io]: origin[1]: 2.63
+[map_server-16] [INFO] [1794982205.088997412] [map_io]: origin[2]: 0
+[map_server-16] [INFO] [1794982205.089000808] [map_io]: free_thresh: 0.196
+[map_server-16] [INFO] [1794982205.089004155] [map_io]: occupied_thresh: 0.65
+[map_server-16] [INFO] [1794982205.089007822] [map_io]: mode: raw
+[map_server-16] [INFO] [1794982205.089011889] [map_io]: negate: 0
+[map_server-16] [INFO] [1794982205.089167880] [map_io]: Loading image_file: /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/keepout_B_ring.pgm
+[planner_server-10] [INFO] [1794982205.089392058] [global_costmap.global_costmap]: Using plugin "static_layer"
+[lifecycle_manager-7] [INFO] [1794982205.091354246] [lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-7] [INFO] [1794982205.091398689] [lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[amcl-6] [INFO] [1794982205.091554059] [amcl]: Activating
+[amcl-6] [INFO] [1794982205.091594454] [amcl]: initialPoseReceived
+[amcl-6] [INFO] [1794982205.091696935] [amcl]: Setting pose (0.000000): 1.300 4.200 0.000
+[map_server-16] [INFO] [1794982205.091973301] [map_io]: Read map /home/jw/JW_WIKI/robot_navi/robotnavi/demo_cliff/ws/install/cliff_demo/share/cliff_demo/maps/keepout_B_ring.pgm: 210 X 171 map @ 0.05 m/cell
+[planner_server-10] [INFO] [1794982205.092070382] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[amcl-6] [INFO] [1794982205.092104696] [amcl]: Creating bond (amcl) to lifecycle manager.
+[planner_server-10] [INFO] [1794982205.092637228] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-10] [INFO] [1794982205.092660291] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-10] [INFO] [1794982205.093255801] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[planner_server-10] [INFO] [1794982205.095171543] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-10] [INFO] [1794982205.095203282] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-10] [INFO] [1794982205.095815304] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-10] [INFO] [1794982205.095837044] [global_costmap.global_costmap]: Using costmap filter "keepout_filter"
+[lifecycle_manager-20] [INFO] [1794982205.095923105] [lifecycle_manager_filters]: [34m[1mConfiguring costmap_filter_info_server[0m[0m
+[costmap_filter_info_server-17] [INFO] [1794982205.096060360] [costmap_filter_info_server]: Configuring
+[planner_server-10] [INFO] [1794982205.097639865] [global_costmap.global_costmap]: Initialized costmap filter "keepout_filter"
+[planner_server-10] [INFO] [1794982205.097663189] [global_costmap.global_costmap]: Using costmap filter "cliff_filter"
+[lifecycle_manager-20] [INFO] [1794982205.097784254] [lifecycle_manager_filters]: [34m[1mConfiguring cliff_filter_info_server[0m[0m
+[costmap_filter_info_server-18] [INFO] [1794982205.097962436] [cliff_filter_info_server]: Configuring
+[planner_server-10] [INFO] [1794982205.098338838] [global_costmap.global_costmap]: Initialized costmap filter "cliff_filter"
+[planner_server-10] [INFO] [1794982205.101717247] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 210 X 171 at 0.050000 m/pix
+[lifecycle_manager-20] [INFO] [1794982205.101854753] [lifecycle_manager_filters]: [34m[1mActivating filter_mask_server[0m[0m
+[map_server-16] [INFO] [1794982205.101990186] [filter_mask_server]: Activating
+[map_server-16] [INFO] [1794982205.102098157] [filter_mask_server]: Creating bond (filter_mask_server) to lifecycle manager.
+[planner_server-10] [INFO] [1794982205.102117313] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner/NavfnPlanner
+[planner_server-10] [INFO] [1794982205.102143141] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[planner_server-10] [INFO] [1794982205.102593180] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-15] [INFO] [1794982205.105927857] [lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[behavior_server-11] [INFO] [1794982205.106088457] [behavior_server]: Configuring
+[behavior_server-11] [INFO] [1794982205.109362781] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
+[behavior_server-11] [INFO] [1794982205.109942662] [behavior_server]: Configuring spin
+[behavior_server-11] [INFO] [1794982205.111611163] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
+[behavior_server-11] [INFO] [1794982205.112061082] [behavior_server]: Configuring backup
+[behavior_server-11] [INFO] [1794982205.113799593] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
+[behavior_server-11] [INFO] [1794982205.114406605] [behavior_server]: Configuring drive_on_heading
+[behavior_server-11] [INFO] [1794982205.116433905] [behavior_server]: Creating behavior plugin assisted_teleop of type nav2_behaviors/AssistedTeleop
+[behavior_server-11] [INFO] [1794982205.117708661] [behavior_server]: Configuring assisted_teleop
+[behavior_server-11] [INFO] [1794982205.119880290] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[behavior_server-11] [INFO] [1794982205.120313999] [behavior_server]: Configuring wait
+[lifecycle_manager-15] [INFO] [1794982205.121867705] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-12] [INFO] [1794982205.122001645] [bt_navigator]: Configuring
+[lifecycle_manager-15] [INFO] [1794982205.156081233] [lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
+[waypoint_follower-13] [INFO] [1794982205.156250969] [waypoint_follower]: Configuring
+[waypoint_follower-13] [INFO] [1794982205.161129936] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[lifecycle_manager-15] [INFO] [1794982205.162002592] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-14] [INFO] [1794982205.162173211] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-15] [INFO] [1794982205.164435779] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-8] [INFO] [1794982205.164565812] [controller_server]: Activating
+[controller_server-8] [INFO] [1794982205.164599364] [local_costmap.local_costmap]: Activating
+[controller_server-8] [INFO] [1794982205.164611136] [local_costmap.local_costmap]: Checking transform
+[controller_server-8] [INFO] [1794982205.164631003] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[lifecycle_manager-7] [INFO] [1794982205.194128889] [lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-7] [INFO] [1794982205.194166829] [lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-7] [INFO] [1794982205.194178541] [lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[ir_guard-3] [INFO] [1794982205.197488613] [ir_guard]: ir_guard enabled=False
+[lifecycle_manager-20] [INFO] [1794982205.204433911] [lifecycle_manager_filters]: Server filter_mask_server connected with bond.
+[lifecycle_manager-20] [INFO] [1794982205.204481300] [lifecycle_manager_filters]: [34m[1mActivating costmap_filter_info_server[0m[0m
+[costmap_filter_info_server-17] [INFO] [1794982205.204737868] [costmap_filter_info_server]: Activating
+[costmap_filter_info_server-17] [INFO] [1794982205.204786378] [costmap_filter_info_server]: Creating bond (costmap_filter_info_server) to lifecycle manager.
+[spawn_entity.py-4] [INFO] [1794982205.207119038] [spawn_entity]: Spawn Entity started
+[spawn_entity.py-4] [INFO] [1794982205.207405942] [spawn_entity]: Loading entity published on topic robot_description
+[spawn_entity.py-4] [INFO] [1794982205.208868820] [spawn_entity]: Waiting for entity xml on robot_description
+[spawn_entity.py-4] [INFO] [1794982205.210293716] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
+[spawn_entity.py-4] [INFO] [1794982205.210568769] [spawn_entity]: Waiting for service /spawn_entity
+[cliff_detector-19] [INFO] [1794982205.249478342] [cliff_detector]: cliff_detector mode=bayes artifacts=True
+[lifecycle_manager-20] [INFO] [1794982205.306447104] [lifecycle_manager_filters]: Server costmap_filter_info_server connected with bond.
+[lifecycle_manager-20] [INFO] [1794982205.306519048] [lifecycle_manager_filters]: [34m[1mActivating cliff_filter_info_server[0m[0m
+[costmap_filter_info_server-18] [INFO] [1794982205.306824498] [cliff_filter_info_server]: Activating
+[costmap_filter_info_server-18] [INFO] [1794982205.306883969] [cliff_filter_info_server]: Creating bond (cliff_filter_info_server) to lifecycle manager.
+[lifecycle_manager-20] [INFO] [1794982205.408545085] [lifecycle_manager_filters]: Server cliff_filter_info_server connected with bond.
+[lifecycle_manager-20] [INFO] [1794982205.408592283] [lifecycle_manager_filters]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-20] [INFO] [1794982205.408604556] [lifecycle_manager_filters]: [34m[1mCreating bond timer...[0m[0m
+[scenario-21] [INFO] [1794982205.481811313] [basic_navigator]: Publishing Initial Pose
+[amcl-6] [INFO] [1794982205.481985497] [amcl]: initialPoseReceived
+[amcl-6] [INFO] [1794982205.482093378] [amcl]: Setting pose (0.000000): 1.300 4.200 0.000
+[scenario-21] [INFO] [1794982205.482221607] [basic_navigator]: Publishing Initial Pose
+[amcl-6] [INFO] [1794982205.482698837] [amcl]: initialPoseReceived
+[amcl-6] [INFO] [1794982205.482732700] [amcl]: Setting pose (0.000000): 1.300 4.200 0.000
+[controller_server-8] [INFO] [1794982205.664690171] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[spawn_entity.py-4] [INFO] [1794982205.714732039] [spawn_entity]: Calling service /spawn_entity
+[controller_server-8] [INFO] [1794982206.164750308] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gzserver-1] [INFO] [1794982206.544133894] [overhead.overhead_cam]: Publishing camera info to [/overhead/overhead/camera_info]
+[gzserver-1] [INFO] [1794982206.554759054] [gazebo_ros_state]: Publishing states of gazebo models at [/model_states]
+[gzserver-1] [INFO] [1794982206.555053082] [gazebo_ros_state]: Publishing states of gazebo links at [/link_states]
+[gzserver-1] [INFO] [1794982206.616125044] [depth_cam.depth_cam]: Publishing camera info to [/depth_cam/depth_cam/camera_info]
+[gzserver-1] [INFO] [1794982206.617375906] [depth_cam.depth_cam]: Publishing depth camera info to [/depth_cam/depth_cam/depth/camera_info]
+[gzserver-1] [INFO] [1794982206.617681636] [depth_cam.depth_cam]: Publishing pointcloud to [/depth_cam/depth_cam/points]
+[spawn_entity.py-4] [INFO] [1794982206.653246282] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [servi]
+[controller_server-8] [INFO] [1794982206.664725924] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+[gzserver-1] [INFO] [1794982206.763958622] [diff_drive]: Wheel pair 1 separation set to [0.400000m]
+[gzserver-1] [INFO] [1794982206.764013224] [diff_drive]: Wheel pair 1 diameter set to [0.120000m]
+[gzserver-1] [INFO] [1794982206.764615597] [diff_drive]: Subscribed to [/cmd_vel_hw]
+[gzserver-1] [INFO] [1794982206.765659844] [diff_drive]: Advertise odometry on [/odom]
+[gzserver-1] [INFO] [1794982206.767014590] [diff_drive]: Publishing odom transforms between [odom] and [base_footprint]
+[gzserver-1] [INFO] [1794982206.773549393] [joint_states]: Going to publish joint [left_wheel_joint]
+[gzserver-1] [INFO] [1794982206.773602352] [joint_states]: Going to publish joint [right_wheel_joint]
+[amcl-6] [INFO] [1794982206.884866932] [amcl]: createLaserObject
+[INFO] [spawn_entity.py-4]: process has finished cleanly [pid 145069]
+[controller_server-8] [INFO] [1794982207.164927329] [local_costmap.local_costmap]: start
+[controller_server-8] [INFO] [1794982207.165641030] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_filter_info" topic for filter info...
+[controller_server-8] [INFO] [1794982207.166135151] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/cliff_filter_info" topic for filter info...
+[controller_server-8] [INFO] [1794982207.167311614] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_filter_info topic.
+[controller_server-8] [INFO] [1794982207.167338505] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_filter_mask" topic for filter mask...
+[controller_server-8] [INFO] [1794982207.167578853] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /cliff_filter_info topic.
+[controller_server-8] [INFO] [1794982207.167601335] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/cliff_filter_mask" topic for filter mask...
+[controller_server-8] [INFO] [1794982207.168807744] [local_costmap.local_costmap]: KeepoutFilter: Received filter mask from /keepout_filter_mask topic.
+[controller_server-8] [INFO] [1794982207.168981468] [local_costmap.local_costmap]: KeepoutFilter: Received filter mask from /cliff_filter_mask topic.
+[controller_server-8] [WARN] [1794982207.193928228] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982207.366514072] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[controller_server-8] [WARN] [1794982207.394647493] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[lifecycle_manager-15] [INFO] [1794982207.468549804] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-15] [INFO] [1794982207.468619254] [lifecycle_manager_navigation]: [34m[1mActivating smoother_server[0m[0m
+[smoother_server-9] [INFO] [1794982207.468861085] [smoother_server]: Activating
+[smoother_server-9] [INFO] [1794982207.468906309] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[lifecycle_manager-15] [INFO] [1794982207.570423284] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[lifecycle_manager-15] [INFO] [1794982207.570472416] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-10] [INFO] [1794982207.570714147] [planner_server]: Activating
+[planner_server-10] [INFO] [1794982207.570772996] [global_costmap.global_costmap]: Activating
+[planner_server-10] [INFO] [1794982207.570790439] [global_costmap.global_costmap]: Checking transform
+[planner_server-10] [INFO] [1794982207.570840011] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.782000 but the earliest data is at time 1.102000, when looking up transform from frame [base_link] to frame [map]
+[controller_server-8] [WARN] [1794982207.692436803] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982207.995078760] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [INFO] [1794982208.070995015] [global_costmap.global_costmap]: start
+[planner_server-10] [INFO] [1794982208.071667319] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_filter_info" topic for filter info...
+[planner_server-10] [INFO] [1794982208.072142605] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/cliff_filter_info" topic for filter info...
+[planner_server-10] [INFO] [1794982208.073284133] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_filter_info topic.
+[planner_server-10] [INFO] [1794982208.073305393] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_filter_mask" topic for filter mask...
+[planner_server-10] [INFO] [1794982208.073594311] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /cliff_filter_info topic.
+[planner_server-10] [INFO] [1794982208.073612475] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/cliff_filter_mask" topic for filter mask...
+[planner_server-10] [INFO] [1794982208.074771165] [global_costmap.global_costmap]: KeepoutFilter: Received filter mask from /keepout_filter_mask topic.
+[planner_server-10] [INFO] [1794982208.083943386] [global_costmap.global_costmap]: KeepoutFilter: Received filter mask from /cliff_filter_mask topic.
+[controller_server-8] [WARN] [1794982208.293644865] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982208.293689909] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982208.592477726] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982208.592475252] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982208.797450309] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982208.797504170] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982209.093015889] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982209.093022050] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [INFO] [1794982209.122592380] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[planner_server-10] [INFO] [1794982209.123853160] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-15] [INFO] [1794982209.226272325] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-15] [INFO] [1794982209.226348317] [lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[behavior_server-11] [INFO] [1794982209.226684213] [behavior_server]: Activating
+[behavior_server-11] [INFO] [1794982209.226723116] [behavior_server]: Activating spin
+[behavior_server-11] [INFO] [1794982209.226736911] [behavior_server]: Activating backup
+[behavior_server-11] [INFO] [1794982209.226748703] [behavior_server]: Activating drive_on_heading
+[behavior_server-11] [INFO] [1794982209.226759684] [behavior_server]: Activating assisted_teleop
+[behavior_server-11] [INFO] [1794982209.226769492] [behavior_server]: Activating wait
+[behavior_server-11] [INFO] [1794982209.226783087] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[controller_server-8] [WARN] [1794982209.296336950] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982209.296345416] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[lifecycle_manager-15] [INFO] [1794982209.328529388] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[lifecycle_manager-15] [INFO] [1794982209.328577958] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-12] [INFO] [1794982209.328801746] [bt_navigator]: Activating
+[bt_navigator-12] [INFO] [1794982209.344463605] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-15] [INFO] [1794982209.446972727] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-15] [INFO] [1794982209.447105936] [lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
+[waypoint_follower-13] [INFO] [1794982209.447492486] [waypoint_follower]: Activating
+[waypoint_follower-13] [INFO] [1794982209.447551787] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[lifecycle_manager-15] [INFO] [1794982209.549222767] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[lifecycle_manager-15] [INFO] [1794982209.549285033] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-14] [INFO] [1794982209.549589381] [velocity_smoother]: Activating
+[velocity_smoother-14] [INFO] [1794982209.549676623] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[controller_server-8] [WARN] [1794982209.592003315] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982209.592022771] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[lifecycle_manager-15] [INFO] [1794982209.651624279] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-15] [INFO] [1794982209.651669543] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-15] [INFO] [1794982209.651683009] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-8] [WARN] [1794982209.794994902] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982209.795058210] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[scenario-21] [INFO] [1794982209.886461487] [basic_navigator]: Navigating to goal: 8.56772740791418 6.595237659819189...
+[bt_navigator-12] [INFO] [1794982209.887328854] [bt_navigator]: Begin navigating from current location (1.30, 4.20) to (8.57, 6.60)
+[controller_server-8] [INFO] [1794982209.908507770] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-8] [WARN] [1794982209.908593820] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded general_goal_checker . This warning will appear once.
+[controller_server-8] [WARN] [1794982210.093514145] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982210.093530615] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982210.298565049] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982210.298573324] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982210.592556267] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982210.592569191] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982210.798706160] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982210.798770119] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982210.958959125] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982211.094187626] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982211.094199097] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982211.296497697] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982211.296528966] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982211.594477398] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982211.594494420] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982211.796801316] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982211.796799853] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982212.008945111] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982212.095075595] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982212.095085253] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982212.296186158] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982212.296194023] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982212.593913876] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982212.593978577] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982212.797659452] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982212.797672947] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982213.008945805] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982213.094582728] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982213.094591274] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982213.298748685] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982213.298805361] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982213.595462870] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982213.595474582] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982213.797090234] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982213.797118437] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982214.058954408] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982214.094313017] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982214.094329277] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982214.299252904] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982214.299266279] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982214.595285114] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982214.595282399] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982214.796268676] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982214.796280748] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982215.058949679] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982215.095115993] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982215.095113989] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982215.297031209] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982215.297028414] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982215.594951395] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982215.594965011] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982215.798989219] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982215.799009366] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982216.095070616] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982216.095071698] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982216.108955231] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982216.299108588] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982216.299108347] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982216.595357665] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982216.595357745] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982216.801228363] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982216.801245926] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982217.097505021] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982217.097505161] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982217.158972472] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982217.298298542] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982217.298317868] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982217.595977141] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982217.595995765] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982217.797573117] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982217.797571114] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982218.096156322] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982218.096146113] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982218.158950816] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982218.298503557] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982218.298527782] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982218.595580601] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982218.595587103] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982218.800562587] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982218.800565973] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982219.097112448] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982219.097115123] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982219.208956010] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982219.301287628] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982219.301321671] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982219.599091554] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982219.599109818] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982219.800313078] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982219.800323898] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982220.101498296] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982220.101492756] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982220.208944940] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982220.305748915] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982220.305755206] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982220.601383894] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982220.601391869] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982220.807423517] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982220.807425972] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982221.101834925] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982221.101856344] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982221.258942045] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982221.305943957] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982221.305953415] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982221.603935265] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982221.603951796] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982221.803789386] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982221.803789486] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982222.101728636] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982222.101743824] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982222.305189517] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982222.305190158] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982222.308946772] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982222.602338953] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982222.602346878] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982222.805631250] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982222.805663250] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982223.103826845] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982223.103840050] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982223.304588874] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982223.304607017] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982223.308942079] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982223.604027674] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982223.604037131] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982223.806113430] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982223.806142424] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982224.103373467] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982224.103377625] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982224.306013273] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982224.306033741] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982224.358942002] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982224.603021108] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982224.603038791] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982224.804704593] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982224.804725962] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982225.103506752] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982225.103537759] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982225.306948260] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982225.306967215] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982225.358991888] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982225.606251560] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982225.606961083] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982225.808956386] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982225.808954933] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982226.104611815] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982226.104620832] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982226.304878123] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982226.304894684] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982226.408941814] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982226.604032413] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982226.604038624] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982226.807249431] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982226.807252086] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982227.104157422] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982227.104160087] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982227.311245593] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982227.311249501] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982227.458942592] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982227.605796719] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982227.605789626] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982227.806481374] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982227.806491132] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982228.103714387] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982228.103724697] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982228.309183820] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982228.309186886] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982228.458938392] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982228.604211490] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982228.604235976] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982228.806444589] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982228.806436975] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982229.106596792] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982229.106596972] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982229.309069325] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982229.309070878] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982229.508955827] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982229.606704853] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982229.606714341] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982229.811761323] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982229.811758077] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982230.106871663] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982230.106876943] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982230.308515250] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982230.308513877] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982230.508948058] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982230.608109516] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982230.608154600] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982230.905158358] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982230.905168136] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982231.061244528] [controller_server]: Reached the goal!
+[bt_navigator-12] [INFO] [1794982231.097973926] [bt_navigator]: Goal succeeded
+[planner_server-10] [WARN] [1794982231.109865793] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982231.109869821] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982231.324863861] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982231.324904487] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982231.532548846] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982231.532558083] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[scenario-21] [INFO] [1794982231.721531909] [basic_navigator]: Backing up 0.6109242649499199 m at 0.1 m/s....
+[behavior_server-11] [INFO] [1794982231.722034687] [behavior_server]: Running backup
+[behavior_server-11] [INFO] [1794982231.722277800] [behavior_server]: DriveOnHeading: no acceleration or deceleration limits set
+[controller_server-8] [WARN] [1794982231.745069266] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982231.745075998] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982232.040916603] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982232.040935448] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982232.242260927] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982232.242317072] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982232.541350095] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982232.541442517] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982232.844347539] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982232.844362296] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982233.141407282] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982233.141440154] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982233.347379530] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982233.347385862] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982233.640896488] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982233.640940380] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982233.843597469] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982233.843597549] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982234.142867800] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982234.142914487] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982234.344934325] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982234.344977335] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982234.640851123] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982234.640844862] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982234.843334566] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982234.843387695] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[behavior_server-11] [WARN] [1794982235.122538679] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[behavior_server-11] [WARN] [1794982235.122644396] [behavior_server]: backup failed
+[behavior_server-11] [WARN] [1794982235.122684030] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[controller_server-8] [WARN] [1794982235.143536681] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982235.143570844] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982235.343002616] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982235.343033373] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982235.644164778] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982235.644163866] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982235.843908802] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982235.843908962] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982236.141709537] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982236.141733932] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982236.345773351] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982236.345791224] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982236.641703898] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982236.641725889] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982236.844256385] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982236.844271413] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982237.142584710] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982237.142598947] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982237.344211028] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982237.344218923] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982237.643408011] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982237.643429521] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982237.843975455] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982237.843977198] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982238.141934418] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982238.141934618] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982238.347266692] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982238.347268896] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982238.645350336] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982238.645376815] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982238.846663688] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982238.846677484] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982239.143166605] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982239.143305935] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982239.346706976] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982239.346701706] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982239.642313229] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982239.642396104] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982239.845541629] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982239.845969817] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982240.144290047] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982240.144307360] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982240.345549135] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982240.345554625] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982240.645635555] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982240.645649532] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982240.846816346] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982240.846816547] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982241.143692642] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982241.143697621] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982241.345999539] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982241.346005851] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982241.644291503] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982241.644336286] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982241.848088688] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982241.848111130] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982242.144086603] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982242.144138330] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[scenario-21] [INFO] [1794982242.163264611] [basic_navigator]: Navigating to goal: 5.3 8.9...
+[bt_navigator-12] [INFO] [1794982242.163636684] [bt_navigator]: Begin navigating from current location (8.29, 6.23) to (5.30, 8.90)
+[controller_server-8] [INFO] [1794982242.184757723] [controller_server]: Received a goal, begin computing control effort.
+[planner_server-10] [WARN] [1794982242.348671996] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982242.349646172] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982242.646276634] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982242.646288727] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982242.848139412] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982242.848135324] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982243.145171301] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982243.145227907] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982243.235026098] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982243.351391088] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982243.351412919] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982243.644285934] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982243.644288359] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982243.848397622] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982243.848396039] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982244.147856381] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982244.147860459] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982244.285041799] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982244.348984035] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982244.348999774] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982244.645330000] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982244.645334649] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982244.848782166] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982244.848789830] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982245.145253314] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982245.145264595] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982245.285032184] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982245.350383595] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982245.350396600] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982245.645184829] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982245.645381706] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982245.849237592] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982245.849240026] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982246.146036187] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982246.146045193] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982246.335035238] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982246.349497164] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982246.349504248] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982246.648652671] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982246.648681454] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982246.848519189] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982246.848554194] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982247.149315371] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982247.149332914] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982247.335030340] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982247.351493857] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982247.351513613] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982247.646932632] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982247.646951948] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982247.851592983] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982247.851598373] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982248.146396894] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982248.146394599] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982248.347764435] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982248.347763634] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982248.385028712] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982248.547860196] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982248.547886676] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982248.849689440] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982248.849689450] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982249.147234276] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982249.147237752] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982249.351757006] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982249.351786020] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982249.435029708] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982249.647876914] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982249.648111211] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982249.849657774] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982249.849657875] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982250.147549364] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982250.147548993] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982250.349672559] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982250.349684702] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982250.435074840] [controller_server]: Passing new path to controller.
+[planner_server-10] [WARN] [1794982250.650111875] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982250.650111926] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982250.850943383] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982250.850947341] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982251.149352704] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982251.149354898] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982251.353447453] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982251.353447443] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982251.485074540] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982251.649661120] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982251.649662662] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982251.851857580] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982251.851869823] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982252.150860504] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982252.150861245] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982252.447394585] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982252.447405726] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982252.485032066] [controller_server]: Passing new path to controller.
+[controller_server-8] [WARN] [1794982252.647998975] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982252.648000037] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[planner_server-10] [WARN] [1794982252.852679894] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982252.852690814] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [INFO] [1794982253.036785172] [controller_server]: Reached the goal!
+[bt_navigator-12] [INFO] [1794982253.073901912] [bt_navigator]: Goal succeeded
+[scenario-21] [INFO] [1794982253.082255552] [basic_navigator]: 결과: arrived  t=43.1s  가장자리 최소 0.62 m  복구 0회
+[planner_server-10] [WARN] [1794982253.150471006] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[controller_server-8] [WARN] [1794982253.150472138] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /cliff_filter_mask topic. Updating old filter mask.
+[INFO] [scenario-21]: process has finished cleanly [pid 145247]
+[INFO] [lifecycle_manager-20]: sending signal 'SIGINT' to process[lifecycle_manager-20]
+[INFO] [cliff_detector-19]: sending signal 'SIGINT' to process[cliff_detector-19]
+[INFO] [costmap_filter_info_server-18]: sending signal 'SIGINT' to process[costmap_filter_info_server-18]
+[INFO] [costmap_filter_info_server-17]: sending signal 'SIGINT' to process[costmap_filter_info_server-17]
+[INFO] [map_server-16]: sending signal 'SIGINT' to process[map_server-16]
+[INFO] [lifecycle_manager-15]: sending signal 'SIGINT' to process[lifecycle_manager-15]
+[INFO] [velocity_smoother-14]: sending signal 'SIGINT' to process[velocity_smoother-14]
+[INFO] [waypoint_follower-13]: sending signal 'SIGINT' to process[waypoint_follower-13]
+[INFO] [bt_navigator-12]: sending signal 'SIGINT' to process[bt_navigator-12]
+[INFO] [behavior_server-11]: sending signal 'SIGINT' to process[behavior_server-11]
+[INFO] [planner_server-10]: sending signal 'SIGINT' to process[planner_server-10]
+[INFO] [smoother_server-9]: sending signal 'SIGINT' to process[smoother_server-9]
+[INFO] [controller_server-8]: sending signal 'SIGINT' to process[controller_server-8]
+[INFO] [lifecycle_manager-7]: sending signal 'SIGINT' to process[lifecycle_manager-7]
+[INFO] [amcl-6]: sending signal 'SIGINT' to process[amcl-6]
+[INFO] [map_server-5]: sending signal 'SIGINT' to process[map_server-5]
+[INFO] [ir_guard-3]: sending signal 'SIGINT' to process[ir_guard-3]
+[INFO] [robot_state_publisher-2]: sending signal 'SIGINT' to process[robot_state_publisher-2]
+[INFO] [gzserver-1]: sending signal 'SIGINT' to process[gzserver-1]
+[lifecycle_manager-20] [INFO] [1794982253.430024805] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-20] [INFO] [1794982253.430137485] [lifecycle_manager_filters]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_filters)
+[lifecycle_manager-20] [INFO] [1794982253.430178402] [lifecycle_manager_filters]: [34m[1mTerminating bond timer...[0m[0m
+[costmap_filter_info_server-18] [INFO] [1794982253.432671789] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[costmap_filter_info_server-18] [INFO] [1794982253.432761205] [cliff_filter_info_server]: Running Nav2 LifecycleNode rcl preshutdown (cliff_filter_info_server)
+[costmap_filter_info_server-18] [INFO] [1794982253.432810046] [cliff_filter_info_server]: Deactivating
+[costmap_filter_info_server-18] [INFO] [1794982253.432824684] [cliff_filter_info_server]: Destroying bond (cliff_filter_info_server) to lifecycle manager.
+[costmap_filter_info_server-17] [INFO] [1794982253.433951905] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[costmap_filter_info_server-17] [INFO] [1794982253.434043285] [costmap_filter_info_server]: Running Nav2 LifecycleNode rcl preshutdown (costmap_filter_info_server)
+[costmap_filter_info_server-17] [INFO] [1794982253.434099891] [costmap_filter_info_server]: Deactivating
+[costmap_filter_info_server-17] [INFO] [1794982253.434114017] [costmap_filter_info_server]: Destroying bond (costmap_filter_info_server) to lifecycle manager.
+[map_server-16] [INFO] [1794982253.435283427] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-16] [INFO] [1794982253.435360540] [filter_mask_server]: Running Nav2 LifecycleNode rcl preshutdown (filter_mask_server)
+[map_server-16] [INFO] [1794982253.435400475] [filter_mask_server]: Deactivating
+[map_server-16] [INFO] [1794982253.435409802] [filter_mask_server]: Destroying bond (filter_mask_server) to lifecycle manager.
+[lifecycle_manager-15] [INFO] [1794982253.436577709] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-15] [INFO] [1794982253.436631329] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[lifecycle_manager-15] [INFO] [1794982253.436653901] [lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[velocity_smoother-14] [INFO] [1794982253.438009047] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[velocity_smoother-14] [INFO] [1794982253.438099826] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-14] [INFO] [1794982253.438152454] [velocity_smoother]: Deactivating
+[velocity_smoother-14] [INFO] [1794982253.438173033] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[waypoint_follower-13] [INFO] [1794982253.439561991] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[waypoint_follower-13] [INFO] [1794982253.439656728] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[waypoint_follower-13] [INFO] [1794982253.439703335] [waypoint_follower]: Deactivating
+[waypoint_follower-13] [INFO] [1794982253.439717371] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[bt_navigator-12] [INFO] [1794982253.442680003] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[bt_navigator-12] [INFO] [1794982253.442730687] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-12] [INFO] [1794982253.442780700] [bt_navigator]: Deactivating
+[bt_navigator-12] [INFO] [1794982253.442804495] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[costmap_filter_info_server-18] [INFO] [1794982253.443145761] [cliff_filter_info_server]: Cleaning up
+[costmap_filter_info_server-18] [INFO] [1794982253.443409402] [cliff_filter_info_server]: Destroying bond (cliff_filter_info_server) to lifecycle manager.
+[behavior_server-11] [INFO] [1794982253.444313858] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[behavior_server-11] [INFO] [1794982253.444355696] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[behavior_server-11] [INFO] [1794982253.444394679] [behavior_server]: Deactivating
+[behavior_server-11] [INFO] [1794982253.444414896] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[costmap_filter_info_server-17] [INFO] [1794982253.444347811] [costmap_filter_info_server]: Cleaning up
+[costmap_filter_info_server-17] [INFO] [1794982253.444375894] [costmap_filter_info_server]: Destroying bond (costmap_filter_info_server) to lifecycle manager.
+[map_server-16] [INFO] [1794982253.445615324] [filter_mask_server]: Cleaning up
+[map_server-16] [INFO] [1794982253.445647133] [filter_mask_server]: Destroying bond (filter_mask_server) to lifecycle manager.
+[planner_server-10] [INFO] [1794982253.446032792] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-10] [INFO] [1794982253.446091421] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-10] [INFO] [1794982253.446139230] [planner_server]: Deactivating
+[planner_server-10] [INFO] [1794982253.446163967] [global_costmap.global_costmap]: Deactivating
+[smoother_server-9] [INFO] [1794982253.447519162] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[smoother_server-9] [INFO] [1794982253.447574375] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[smoother_server-9] [INFO] [1794982253.447616083] [smoother_server]: Deactivating
+[smoother_server-9] [INFO] [1794982253.447627645] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[velocity_smoother-14] [INFO] [1794982253.448415663] [velocity_smoother]: Cleaning up
+[velocity_smoother-14] [INFO] [1794982253.448454085] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[controller_server-8] [INFO] [1794982253.448893564] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-8] [INFO] [1794982253.448951141] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-8] [INFO] [1794982253.448989423] [controller_server]: Deactivating
+[controller_server-8] [INFO] [1794982253.449011754] [local_costmap.local_costmap]: Deactivating
+[waypoint_follower-13] [INFO] [1794982253.449951927] [waypoint_follower]: Cleaning up
+[lifecycle_manager-7] [INFO] [1794982253.450311617] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-7] [INFO] [1794982253.450376138] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[lifecycle_manager-7] [INFO] [1794982253.450400603] [lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
+[amcl-6] [INFO] [1794982253.452985040] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[amcl-6] [INFO] [1794982253.453062634] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[amcl-6] [INFO] [1794982253.453113299] [amcl]: Deactivating
+[amcl-6] [INFO] [1794982253.453125291] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[bt_navigator-12] [INFO] [1794982253.453036977] [bt_navigator]: Cleaning up
+[behavior_server-11] [INFO] [1794982253.454672064] [behavior_server]: Cleaning up
+[map_server-5] [INFO] [1794982253.454844195] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-5] [INFO] [1794982253.454947668] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-5] [INFO] [1794982253.455001709] [map_server]: Deactivating
+[map_server-5] [INFO] [1794982253.455016396] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[smoother_server-9] [INFO] [1794982253.457859395] [smoother_server]: Cleaning up
+[waypoint_follower-13] [INFO] [1794982253.457879242] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[robot_state_publisher-2] [INFO] [1794982253.458517472] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[behavior_server-11] [INFO] [1794982253.462060626] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[waypoint_follower-13] [INFO] [1794982253.462657759] [waypoint_follower]: Destroying
+[amcl-6] [INFO] [1794982253.463373583] [amcl]: Cleaning up
+[map_server-5] [INFO] [1794982253.465285456] [map_server]: Cleaning up
+[map_server-5] [INFO] [1794982253.465318999] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-6] [INFO] [1794982253.469665670] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[smoother_server-9] [INFO] [1794982253.472846379] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[velocity_smoother-14] [INFO] [1794982253.511415426] [velocity_smoother]: Destroying
+[costmap_filter_info_server-18] [INFO] [1794982253.534284801] [cliff_filter_info_server]: Destroying
+[smoother_server-9] [INFO] [1794982253.549096659] [smoother_server]: Destroying
+[controller_server-8] [INFO] [1794982253.565118381] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[map_server-5] [INFO] [1794982253.580862546] [map_server]: Destroying
+[controller_server-8] [INFO] [1794982253.585370758] [controller_server]: Cleaning up
+[controller_server-8] [INFO] [1794982253.585577554] [local_costmap.local_costmap]: Cleaning up
+[bt_navigator-12] [INFO] [1794982253.590002171] [bt_navigator]: Completed Cleaning up
+[bt_navigator-12] [INFO] [1794982253.590040522] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[amcl-6] [INFO] [1794982253.593583876] [amcl]: Destroying
+[lifecycle_manager-7] [INFO] [1794982253.594536772] [lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[map_server-16] [INFO] [1794982253.603604533] [filter_mask_server]: Destroying
+[costmap_filter_info_server-17] [INFO] [1794982253.606302432] [costmap_filter_info_server]: Destroying
+[bt_navigator-12] [INFO] [1794982253.609260315] [bt_navigator]: Destroying
+[lifecycle_manager-20] [INFO] [1794982253.611672621] [lifecycle_manager_filters]: Destroying lifecycle_manager_filters
+[controller_server-8] [INFO] [1794982253.619284499] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[behavior_server-11] [INFO] [1794982253.628197772] [behavior_server]: Destroying
+[INFO] [velocity_smoother-14]: process has finished cleanly [pid 145091]
+[INFO] [waypoint_follower-13]: process has finished cleanly [pid 145089]
+[controller_server-8] [INFO] [1794982253.669352508] [local_costmap.local_costmap]: Destroying
+[INFO] [cliff_detector-19]: process has finished cleanly [pid 145243]
+[controller_server-8] [INFO] [1794982253.696814113] [controller_server]: Destroying
+[INFO] [ir_guard-3]: process has finished cleanly [pid 145067]
+[INFO] [costmap_filter_info_server-18]: process has finished cleanly [pid 145239]
+[INFO] [map_server-16]: process has finished cleanly [pid 145102]
+[INFO] [costmap_filter_info_server-17]: process has finished cleanly [pid 145178]
+[INFO] [lifecycle_manager-7]: process has finished cleanly [pid 145075]
+[INFO] [bt_navigator-12]: process has finished cleanly [pid 145087]
+[INFO] [behavior_server-11]: process has finished cleanly [pid 145085]
+[INFO] [smoother_server-9]: process has finished cleanly [pid 145079]
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 145065]
+[INFO] [map_server-5]: process has finished cleanly [pid 145071]
+[lifecycle_manager-15] [INFO] [1794982253.784121131] [lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[INFO] [lifecycle_manager-20]: process has finished cleanly [pid 145245]
+[INFO] [controller_server-8]: process has finished cleanly [pid 145077]
+[INFO] [amcl-6]: process has finished cleanly [pid 145073]
+[INFO] [lifecycle_manager-15]: process has finished cleanly [pid 145093]
+[INFO] [gzserver-1]: process has finished cleanly [pid 145063]
+[planner_server-10] [INFO] [1794982254.071782331] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[planner_server-10] [INFO] [1794982254.071879542] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-10] [INFO] [1794982254.082289874] [planner_server]: Cleaning up
+[planner_server-10] [INFO] [1794982254.084611140] [global_costmap.global_costmap]: Cleaning up
+[planner_server-10] [INFO] [1794982254.085108668] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[planner_server-10] [INFO] [1794982254.085187344] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[planner_server-10] [INFO] [1794982254.086010940] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-10] [INFO] [1794982254.088525377] [global_costmap.global_costmap]: Destroying
+[planner_server-10] [INFO] [1794982254.089420575] [planner_server]: Destroying
+[INFO] [planner_server-10]: process has finished cleanly [pid 145083]
