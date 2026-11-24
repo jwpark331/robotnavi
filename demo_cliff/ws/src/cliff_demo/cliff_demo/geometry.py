@@ -88,6 +88,8 @@ IR_RADIUS = float(os.environ.get("CLIFF_IR_R", "0.24"))   # 중심에서 [m]. v4
 # SENSE_DELAY: 인지 지연 [s]. ir_guard의 IR 판정 반영과 cliff_detector의 깊이 영상 처리를 같은 시간만큼 늦춘다.
 WHEEL_ACC = float(os.environ.get("CLIFF_WHEEL_ACC", "3.0"))
 SENSE_DELAY = float(os.environ.get("CLIFF_SENSE_DELAY", "0"))
+# v7 (11/24): odom 배율 오차. 바퀴 플러그인의 wheel_diameter만 s배로 준다 → odom 이동 거리 · 회전각 = 실제의 s배. 기본 1.0이면 v6까지와 같다.
+ODOM_SCALE = float(os.environ.get("CLIFF_ODOM_SCALE", "1.0"))
 IR_CLIFF = 0.07                    # 이보다 멀면(또는 반사 없음) 낭떠러지
 KEEPOUT_MARGIN = 0.30   # 운영자가 그리는 keepout = 계단 구멍 + 30 cm (Nav2 필터는 인플레이션을 안 받으므로)
 

@@ -562,7 +562,7 @@ class Runner:
                       back_dist=round(back_dist, 3) if back_dist else None, pitch_k=self.pitch_k,
                       keepout_ring=self.keepout_ring, init_err=init_err, max_vel=self.max_vel,
                       ir_r=G.IR_RADIUS, cam_kill_x=self.cam_kill_x,
-                      world=G.WORLD, wheel_acc=G.WHEEL_ACC, sense_delay=G.SENSE_DELAY,
+                      world=G.WORLD, wheel_acc=G.WHEEL_ACC, sense_delay=G.SENSE_DELAY, odom_scale=G.ODOM_SCALE,
                       yield_d=G.YIELD_D, yield_plan=self.y_plan,
                       drop_marks_max=self.drop_max if G.CONDITIONS[self.cond].get("nav2_voxel") else None,
                       drop_marks_t=self.drop_t, drop_msgs=self.drop_n,
